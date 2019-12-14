@@ -1,0 +1,62 @@
+{
+  "name": "santi",
+  "version": "0.0.0-beta.1",
+  "description": "基于 create-react-app 和 jsdom 的 SSR 方案，SPA/预渲染/SSR 三位一体",
+  "bin": {
+    "santi": "./bin/index.js"
+  },
+  "main": "./index.js",
+  "keywords": [
+    "SSR",
+    "jsdom",
+    "headless",
+    "server-side rendering",
+    "react",
+    "preact",
+    "prerender"
+  ],
+  "author": "CJY0208",
+  "license": "ISC",
+  "homepage": "https://github.com/CJY0208/santi",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CJY0208/santi.git"
+  },
+  "scripts": {
+    "build": "rollup --config"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "dependencies": {
+    "@prerenderer/prerenderer": "^0.7.2",
+    "compression-webpack-plugin": "^3.0.1",
+    "customize-cra": "^0.9.1",
+    "hoist-non-react-statics": "^3.3.1",
+    "http-proxy-middleware": "^0.20.0",
+    "jsdom": "^15.2.1",
+    "koa": "^2.11.0",
+    "koa-compress": "^3.0.0",
+    "koa-proxy": "^1.0.0-alpha.3",
+    "koa-static": "^5.0.0",
+    "opener": "^1.5.1",
+    "portfinder": "^1.0.25",
+    "prerender-spa-plugin": "^3.4.0",
+    "promise-limit": "^2.7.0",
+    "react-app-rewired": "^2.1.5",
+    "react-scripts": "^3.3.0",
+    "webpack-bundle-analyzer": "^3.6.0",
+    "yargs": "^15.0.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.5",
+    "@babel/preset-env": "^7.7.6",
+    "@babel/preset-react": "^7.7.4",
+    "rollup": "^1.27.12",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-json": "^4.0.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-uglify": "^6.0.4"
+  }
+}
