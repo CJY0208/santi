@@ -6,7 +6,7 @@ SSR 功能基于 jsdom，每次渲染需要启动 jsdom 沙盒，相对于 rende
 
 目前主要针对低并发高可用性或高并发低可用性等低计算量场景
 
-具体表现参考[压测表现](#benchmark)
+具体可参考[压测表现](#benchmark)
 
 ## Features
 
