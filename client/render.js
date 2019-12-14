@@ -2,8 +2,10 @@ import ReactDOM from 'react-dom'
 
 import { isFunction } from './helpers'
 
+const ROOT_KEY = 'ssr-root'
+
 function removeSsrRoot() {
-  const ssrRoot = document.getElementById('ssr-root')
+  const ssrRoot = document.getElementById(ROOT_KEY)
   if (ssrRoot) {
     try {
       ssrRoot.parentNode.removeChild(ssrRoot)
@@ -16,16 +18,19 @@ function removeSsrRoot() {
 function render(element, container, callback) {
   // ssr 阶段将内容渲染至动态生成的 ssr-root 节点中
   if (window.__SSR__) {
-    const ssrRoot = document.createElement('div')
-    ssrRoot.id = 'ssr-root'
-    document.body.insertBefore(ssrRoot, container)
+    let ssrRoot = document.getElementById(ROOT_KEY)
+    if (!ssrRoot) {
+      ssrRoot = document.createElement('div')
+      ssrRoot.id = ROOT_KEY
+      document.body.insertBefore(ssrRoot, container)
+    }
     return ReactDOM.render(element, ssrRoot, callback)
   }
 
   // csr 阶段若为 ssr 渲染结果，则在 csr 完成后替换 ssr 结果
   // 注：不使用水合操作（ReactDOM.hydrate）因为可能造成节点错误问题
   if (window.__SSRED__) {
-    const ssrRoot = document.getElementById('ssr-root')
+    const ssrRoot = document.getElementById(ROOT_KEY)
     let renderCallback = callback
 
     container.style.display = 'none'
