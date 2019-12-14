@@ -6,8 +6,8 @@ const {
 } = require('customize-cra')
 const { argv } = require('yargs')
 const CompressionPlugin = require('compression-webpack-plugin')
-const PrerenderSPAPlugin = require('prerender-spa-plugin')
 
+const PrerenderSPAPlugin = require('./PrerenderSPAPlugin')
 const { devSsr, getConfig, paths, JSDOMPrerenderer } = require('../server')
 const parsePrerenderConfig = require('./parsePrerenderConfig')
 

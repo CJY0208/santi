@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
-import ReactDOM from 'react-dom'
-import { useState, getInitialProps, Snapshot } from 'santi'
+import { useState, getInitialProps, Snapshot, render } from 'santi'
 
 const delay = time => new Promise(resolve => setTimeout(resolve, time))
 
@@ -33,4 +32,4 @@ const App = getInitialProps(async () => {
   )
 })
 
-ReactDOM.render(<App />, document.getElementById('root'))
+render(<App />, document.getElementById('root'))

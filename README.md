@@ -18,6 +18,62 @@ SSR 功能基于 jsdom，每次渲染需要启动 jsdom 沙盒，相对于 rende
 - [ ] SSR 页面 + 组件级缓存，自由控制
 - [ ] SSR 分片支持
 
+## 兼容性
+
+需要 React Hooks 支持
+
+## Usage
+
+> 需要先使用 [create-react-app](https://create-react-app.dev/docs/getting-started) 生成项目
+
+1. 安装 santi 依赖
+
+   ```bash
+   npm install santi --save
+   # or
+   yarn add santi
+   ```
+
+2. 在 `package.json` 中增加 `"config-overrides-path": "./node_modules/santi/config"` 项
+
+   ```json
+   /* package.json */
+   {
+     ...
+     "config-overrides-path": "./node_modules/santi/config"
+     ...
+   }
+   ```
+
+3. 替换 `package.json` 中 scripts 执行部分
+
+   **注意：需使用 dev 替代启动开发模式，start 命令不再用于启动开发模式，转为启动构建模式后的 SSR 或静态资源代理服务**
+
+   ```diff
+   /* package.json */
+   {
+     ...
+     "scripts": {
+       ...
+   +   "dev": "santi dev",
+   -   "start": "react-scripts start",
+   +   "start": "santi start",
+   -   "build": "react-scripts build",
+   +   "build": "santi build"
+       ...
+      },
+      ...
+   }
+   ```
+
+4. 使用 `santi.render` 替代 `ReactDOM.render`
+
+   ```jsx
+   import { render } from 'santi'
+
+   render(<App />, document.getElementById('root'))
+   ```
+
 ## SSR TODO
 
 - [x] ~~State~~
