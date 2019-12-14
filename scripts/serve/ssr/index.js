@@ -1,11 +1,12 @@
 const Koa = require('koa')
 
-const { paths, koaSsr } = require('../../../server')
+const { paths, koaSsr, getConfig } = require('../../../server')
+
+const { ssr: ssrConfig = {} } = getConfig()
 
 const DEFAULT = {
   useTaskCache: false,
   taskCacheTimeout: -1,
-  renderAfterTimeout: 1000,
   deferHeadScripts: true,
   inlinePrimaryStyle: true,
   inject: {
@@ -25,10 +26,14 @@ function run(config = DEFAULT, port) {
   app.use(
     koaSsr({
       ...DEFAULT,
+      ...ssrConfig,
       ...config,
+      renderAfterTimeout:
+        config.renderAfterTimeout || ssrConfig.timeout || 1000,
       staticDir: paths.appBuild,
       renderAfterDocumentEvent: 'snapshotable',
       inject: {
+        ...(ssrConfig.inject || null),
         ...(config.inject || null),
         __SSR__: true
       }

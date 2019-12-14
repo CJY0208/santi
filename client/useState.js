@@ -2,7 +2,7 @@ import { useState as useReactState } from 'react'
 
 import store from './store'
 
-function useState(key, initialState) {
+function useState(initialState, key) {
   const [state, setState] = useReactState(() => {
     const [err, value] = store.get(key, initialState)
 

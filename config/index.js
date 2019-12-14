@@ -38,12 +38,14 @@ module.exports = {
               // Required - Routes to render.
               routes: prerenderRoutes,
               renderer: new JSDOMPrerenderer({
-                renderAfterTimeout: 1000,
                 ...rendererConfig,
+                renderAfterTimeout: rendererConfig.timeout || 1000,
                 renderAfterDocumentEvent: 'snapshotable',
+                useResourceCache: false,
                 inject: {
                   ...(rendererConfig.inject || null),
-                  __SSR__: true
+                  __SSR__: true,
+                  __PR__: true
                 }
               })
             })

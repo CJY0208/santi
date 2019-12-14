@@ -4,7 +4,7 @@ import hoistStatics from 'hoist-non-react-statics'
 import { run } from './helpers'
 import store from './store'
 
-const getInitialProps = (key, fetch, fallback = null) => Component => {
+const getInitialProps = (fetch, fallback = null, key) => Component => {
   const getProps = props => store.get(key, () => run(fetch, undefined, props))
 
   function WrappedComponent({ forwardedRef, ...props }) {

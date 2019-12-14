@@ -1,6 +1,6 @@
 import { run, isUndefined, promiseGuess, isExist } from './helpers'
 
-const KEY = '__SSRDATA'
+const KEY = '__SSRDATA__'
 
 function inject() {
   let script = document.getElementById(KEY) || document.createElement('script')

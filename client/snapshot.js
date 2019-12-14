@@ -6,9 +6,9 @@ const snapshot = async (delayMillisecond = -1) => {
       await delay(delayMillisecond)
     }
 
-    if (window.__SSR__) {
+    if (window.__SSR__ && !window.__SNAPSHOTED__) {
       const script = document.createElement('script')
-      script.innerHTML = 'window.__SNAPSHOTSSR__=true;'
+      script.innerHTML = 'window.__SNAPSHOTED__=true'
       document.head.appendChild(script)
     }
     // ssr 阶段：通知 santi 可以采集页面内容

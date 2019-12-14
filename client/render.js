@@ -4,17 +4,6 @@ import { isFunction } from './helpers'
 
 const ROOT_KEY = 'ssr-root'
 
-function removeSsrRoot() {
-  const ssrRoot = document.getElementById(ROOT_KEY)
-  if (ssrRoot) {
-    try {
-      ssrRoot.parentNode.removeChild(ssrRoot)
-    } finally {
-      // nothing
-    }
-  }
-}
-
 function render(element, container, callback) {
   // ssr 阶段将内容渲染至动态生成的 ssr-root 节点中
   if (window.__SSR__) {
@@ -37,12 +26,19 @@ function render(element, container, callback) {
     container.innerHTML = ssrRoot.innerHTML
 
     function display() {
-      removeSsrRoot()
+      const ssrRoot = document.getElementById(ROOT_KEY)
+      if (ssrRoot) {
+        try {
+          ssrRoot.parentNode.removeChild(ssrRoot)
+        } finally {
+          // nothing
+        }
+      }
       container.style.display = ''
     }
 
     // 若为快照 ssr 则 csr 阶段将同样收到 snapshotable 事件，在此事件后平滑呈现真实可用交互
-    if (window.__SNAPSHOTSSR__) {
+    if (window.__SNAPSHOTED__) {
       function onSnapshotable() {
         display()
         document.removeEventListener('snapshotable', onSnapshotable)
