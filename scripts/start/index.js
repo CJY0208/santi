@@ -1,14 +1,10 @@
-const { getConfig, getPort } = require('../../server')
+const { getPort } = require('../../server')
 
-function run(runConfig = {}) {
-  const { port = getPort(3000), ...config } = runConfig
+function run() {
+  process.env.PORT = getPort(3000)  
+  process.argv[2] = 'start'
 
-  const cwd = process.cwd()
-  const { mode } = getConfig(cwd)
-
-  const run = require(`./${mode}`)
-
-  run(config, port)
+  require('react-app-rewired/bin')
 }
 
 module.exports = run

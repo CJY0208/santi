@@ -36,7 +36,9 @@ SSR 功能基于 jsdom，每次渲染需要启动 jsdom 沙盒，相对于 rende
 
 2. 在 `package.json` 中增加 `"config-overrides-path"` 项，并替换 scripts 执行部分
 
-   **注意：需使用 dev 替代启动开发模式，start 命令不再用于启动开发模式，转为启动构建模式后的 SSR 或静态资源代理服务**
+   `serve` 命令用于启动构建模式后的 SSR 或静态资源代理服务
+
+   **NOTE：暂不支持 `test` 命令，请勿使用 `react-scripts eject` 命令**
 
    ```diff
    /* package.json */
@@ -44,11 +46,11 @@ SSR 功能基于 jsdom，每次渲染需要启动 jsdom 沙盒，相对于 rende
      ...
      "scripts": {
        ...
-   +   "dev": "santi dev",
    -   "start": "react-scripts start",
    +   "start": "santi start",
    -   "build": "react-scripts build",
    +   "build": "santi build"
+   +   "serve": "santi serve",
        ...
       },
    + "config-overrides-path": "./node_modules/santi/config",
