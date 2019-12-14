@@ -34,18 +34,7 @@ SSR 功能基于 jsdom，每次渲染需要启动 jsdom 沙盒，相对于 rende
    yarn add santi
    ```
 
-2. 在 `package.json` 中增加 `"config-overrides-path": "./node_modules/santi/config"` 项
-
-   ```json
-   /* package.json */
-   {
-     ...
-     "config-overrides-path": "./node_modules/santi/config"
-     ...
-   }
-   ```
-
-3. 替换 `package.json` 中 scripts 执行部分
+2. 在 `package.json` 中增加 `"config-overrides-path"` 项，并替换 scripts 执行部分
 
    **注意：需使用 dev 替代启动开发模式，start 命令不再用于启动开发模式，转为启动构建模式后的 SSR 或静态资源代理服务**
 
@@ -62,14 +51,16 @@ SSR 功能基于 jsdom，每次渲染需要启动 jsdom 沙盒，相对于 rende
    +   "build": "santi build"
        ...
       },
-      ...
+   + "config-overrides-path": "./node_modules/santi/config",
+     ...
    }
    ```
 
-4. 使用 `santi.render` 替代 `ReactDOM.render`
+3. 使用 `santi.render` 替代 `ReactDOM.render`
 
-   ```jsx
-   import { render } from 'santi'
+   ```diff
+   - import { render } from 'react-dom
+   + import { render } from 'santi'
 
    render(<App />, document.getElementById('root'))
    ```
