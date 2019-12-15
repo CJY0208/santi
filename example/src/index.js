@@ -9,8 +9,8 @@ const App = getInitialProps(async () => {
   return {
     prop: `ssrProp ${Math.random()}`
   }
-})(function App({ prop }) {
-  const [state, setState] = useState(`ssrState ${Math.random()}`)
+}, null, 'pageProps_1')(function App({ prop }) {
+  const [state, setState] = useState(`ssrState ${Math.random()}`, 'pageState_1')
 
   useEffect(() => {
     const inter = setInterval(async () => {
