@@ -25,6 +25,8 @@ SSR 功能基于 jsdom，每次渲染需启动 jsdom 沙盒，相对于 React �
 ## Usage
 
 > 需要先使用 [create-react-app](https://create-react-app.dev/docs/getting-started) 生成项目
+>
+> 或者直接参考完整示例项目 [example](https://github.com/CJY0208/santi/tree/master/example)
 
 1. 安装 santi 依赖
 
