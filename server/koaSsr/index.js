@@ -42,6 +42,7 @@ module.exports = function ssr({
     if (
       /\.html$/.test(ctx.request.url) ||
       !/text\/html/.test(ctx.header.accept)
+      // /\..*$/.test(ctx.request.url)
     ) {
       return redirect(ctx, next)
     } else {

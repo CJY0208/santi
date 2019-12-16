@@ -26,15 +26,18 @@ function render(element, container, callback) {
     container.innerHTML = ssrRoot.innerHTML
 
     function display() {
-      const ssrRoot = document.getElementById(ROOT_KEY)
-      if (ssrRoot) {
-        try {
-          ssrRoot.parentNode.removeChild(ssrRoot)
-        } finally {
-          // nothing
+      // 做一定延时，尽可能保证平滑呈现
+      setTimeout(() => {
+        const ssrRoot = document.getElementById(ROOT_KEY)
+        if (ssrRoot) {
+          try {
+            ssrRoot.parentNode.removeChild(ssrRoot)
+          } finally {
+            // nothing
+          }
         }
-      }
-      container.style.display = ''
+        container.style.display = ''
+      }, 56)
     }
 
     // 若为快照 ssr 则 csr 阶段将同样收到 snapshotable 事件，在此事件后平滑呈现真实可用交互
@@ -48,14 +51,11 @@ function render(element, container, callback) {
       // 若不为快照 ssr（一般为超时自动快照），则在 render 回调结束后呈现真实结果
       renderCallback = function(...args) {
         // FIXME: 超时快照可能造成呈现不平滑，具体表现为 SSR 切到真实内容过程中有轻微空屏现象，通俗为 “闪一下”，此问题待完美修正
-        // 做一定延时，尽可能保证平滑呈现
-        setTimeout(() => {
-          display()
+        display()
 
-          if (isFunction(callback)) {
-            callback.apply(this, args)
-          }
-        }, 32)
+        if (isFunction(callback)) {
+          callback.apply(this, args)
+        }
       }
     }
 

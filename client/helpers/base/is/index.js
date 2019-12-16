@@ -5,7 +5,8 @@ export const isNull = val => val === null
 
 export const isFunction = val => typeof val === 'function'
 
-export const isArray = val => val instanceof Array
+export const isArray = val =>
+  isFunction(Array.isArray) ? Array.isArray(val) : val instanceof Array
 
 export const isRegExp = val => val instanceof RegExp
 
@@ -18,7 +19,8 @@ export const isString = val => typeof val === 'string'
 
 export const isExist = val => !(isUndefined(val) || isNull(val))
 
-export const isNaN = val => val !== val
+export const isNaN = val =>
+  isFunction(Number.isNaN) ? Number.isNaN(val) : val !== val // eslint-disable-line
 
 export const isNumber = val => typeof val === 'number' && !isNaN(val)
 
