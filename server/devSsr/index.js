@@ -4,7 +4,7 @@ const portFinder = require('portFinder')
 
 const Server = require('./Server')
 
-const proxy = () => {
+const proxy = ({ logError = true } = {}) => {
   let ssrProxy
   const devServerHost = `http://127.0.0.1:${process.env.PORT}`
 
@@ -43,7 +43,9 @@ const proxy = () => {
   // 防止 SSR 中未知错误导致 dev 进程退出
   // Ref: https://cnodejs.org/topic/5576a30bc4e7fbea6e9a32ad
   process.on('uncaughtException', err => {
-    console.error('[SSR Error]', err)
+    if (logError) {
+      console.error('[SSR Error]', err)
+    }
   })
 
   return (req, res, next) => {

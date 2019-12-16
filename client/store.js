@@ -47,6 +47,11 @@ const store = bootstrap()
 export default {
   get: promiseGuess(
     (key, builder) => {
+      if (!key && window.__SSR__) {
+        // 若无 key 则 SSR 阶段不计算
+        return undefined
+      }
+
       let value
 
       if (!window.__SSR__) {
@@ -60,6 +65,10 @@ export default {
       return value
     },
     (err, value, key) => {
+      if (!key) {
+        return [null, value]
+      }
+
       if (err) {
         store.remove(key)
         return [err, undefined]

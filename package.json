@@ -44,6 +44,7 @@
     "opener": "^1.5.1",
     "portfinder": "^1.0.25",
     "promise-limit": "^2.7.0",
+    "react-activation": "^0.3.4",
     "react-app-rewired": "^2.1.5",
     "react-scripts": "^3.3.0",
     "webpack-bundle-analyzer": "^3.6.0",
@@ -60,5 +61,12 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-uglify": "^6.0.4"
   },
-  "files": ["/bin", "/config", "/lib", "/scripts", "/server", "/index.js"]
+  "files": [
+    "/bin",
+    "/config",
+    "/lib",
+    "/scripts",
+    "/server",
+    "/index.js"
+  ]
 }

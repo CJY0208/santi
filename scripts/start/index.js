@@ -1,7 +1,7 @@
 const { getPort } = require('../../server')
 
 function run() {
-  process.env.PORT = getPort(3000)  
+  process.env.PORT = getPort(3000)
   process.argv[2] = 'start'
 
   require('react-app-rewired/bin')

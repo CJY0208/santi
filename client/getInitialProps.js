@@ -2,22 +2,25 @@ import React, { useState, forwardRef, useRef, useEffect } from 'react'
 import hoistStatics from 'hoist-non-react-statics'
 
 import { run } from './helpers'
+import withSanti, { useSID } from './withSanti'
 import store from './store'
 
 const getInitialProps = (fetch, fallback = null, key) => Component => {
-  const getProps = props => store.get(key, () => run(fetch, undefined, props))
-
   function WrappedComponent({ forwardedRef, ...props }) {
     const [ready, setReady] = useState(false)
     const [ssrProps, setSsrProps] = useState({})
     const mounted = useRef(true)
+    const { getCountedSID } = useSID()
+    const sid = run(getCountedSID) || key
 
     useEffect(() => {
       async function init() {
-        const [err, ssrProps] = await run(getProps, undefined, props)
+        const [err, ssrProps] = await store.get(sid, () =>
+          run(fetch, undefined, props)
+        )
 
         if (err) {
-          console.error(err)
+          console.error('[getInitialProps error]', err)
           return
         }
 
@@ -45,7 +48,7 @@ const getInitialProps = (fetch, fallback = null, key) => Component => {
     <WrappedComponent {...props} forwardedRef={ref} />
   ))
 
-  return hoistStatics(ForwardedRefHOC, WrappedComponent)
+  return withSanti(hoistStatics(ForwardedRefHOC, WrappedComponent))
 }
 
 export default getInitialProps

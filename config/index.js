@@ -1,6 +1,7 @@
 const {
   override,
   overrideDevServer,
+  addBabelPlugin,
   addBundleVisualizer,
   addWebpackPlugin
 } = require('customize-cra')
@@ -24,6 +25,8 @@ module.exports = {
     null,
     [
       ...webpack,
+
+      addBabelPlugin('react-activation/babel'),
 
       // 启用 webpack-bundle-analyzer 分析，命令行中使用 --analyze 生效
       argv.analyze ? addBundleVisualizer() : undefined,
@@ -76,7 +79,11 @@ module.exports = {
           const originBefore = config.before
 
           config.before = (app, server) => {
-            app.use(devSsr())
+            app.use(
+              devSsr({
+                logError: false
+              })
+            )
 
             originBefore.call(config, app, server)
           }
