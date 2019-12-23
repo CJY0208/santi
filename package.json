@@ -1,6 +1,6 @@
 {
   "name": "santi",
-  "version": "0.0.0-beta.9",
+  "version": "0.0.0-beta.10",
   "description": "基于 create-react-app 和 jsdom 的 SSR 方案，SPA/预渲染/SSR 三位一体",
   "bin": {
     "santi": "./bin/index.js"
