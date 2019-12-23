@@ -9,8 +9,9 @@ const { argv } = require('yargs')
 const CompressionPlugin = require('compression-webpack-plugin')
 
 const PrerenderSPAPlugin = require('./PrerenderSPAPlugin')
-const { devSsr, getConfig, paths, JSDOMPrerenderer } = require('../server')
+const { getConfig, paths, JSDOMPrerenderer } = require('../server')
 const parsePrerenderConfig = require('./parsePrerenderConfig')
+const { addDevProxy } = require('./override')
 
 const { webpack = [], devServer = [], prerender: prerenderConfig } = getConfig()
 const { usePrerender, prerenderRoutes, rendererConfig } = parsePrerenderConfig(
@@ -69,27 +70,6 @@ module.exports = {
   ),
   devServer: overrideDevServer.apply(
     null,
-    [
-      ...devServer,
-      config => {
-        const { mode } = getConfig()
-
-        // SSR DEV 模式下增加 html 渲染代理
-        if (mode === 'ssr') {
-          const originBefore = config.before
-
-          config.before = (app, server) => {
-            app.use(
-              devSsr({
-                logError: false
-              })
-            )
-
-            originBefore.call(config, app, server)
-          }
-        }
-        return config
-      }
-    ].filter(Boolean)
+    [...devServer, addDevProxy()].filter(Boolean)
   )
 }

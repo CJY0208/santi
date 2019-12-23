@@ -80,5 +80,6 @@ export default {
 
       return [null, value]
     }
-  )
+  ),
+  set: store.set
 }

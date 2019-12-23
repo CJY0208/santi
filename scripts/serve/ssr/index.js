@@ -1,8 +1,9 @@
 const Koa = require('koa')
+const httpProxy = require('koa-server-http-proxy')
 
 const { paths, koaSsr, getConfig } = require('../../../server')
 
-const { ssr: ssrConfig = {} } = getConfig()
+const { ssr: ssrConfig = {}, proxy: proxyTable = {} } = getConfig()
 
 const DEFAULT = {
   useTaskCache: false,
@@ -28,6 +29,7 @@ function run(config = DEFAULT, port) {
       ...DEFAULT,
       ...ssrConfig,
       ...config,
+      proxy: proxyTable,
       renderAfterTimeout:
         config.renderAfterTimeout || ssrConfig.timeout || 1000,
       staticDir: paths.appBuild,
@@ -40,8 +42,12 @@ function run(config = DEFAULT, port) {
     })
   )
 
+  Object.entries(proxyTable).forEach(([context, options]) => {
+    app.use(httpProxy(context, options))
+  })
+
   app.listen(port, () => {
-    console.log(`listening on port ${port}`)
+    console.log(`[SSR] Koa server listening on port ${port}`)
   })
 }
 

@@ -5,6 +5,7 @@ const DEFAULT = {
   mode: 'ssr',
   prerender: false,
   ssr: {},
+  proxy: {},
   webpack: [],
   devServer: []
 }

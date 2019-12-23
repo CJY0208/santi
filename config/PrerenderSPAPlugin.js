@@ -1,3 +1,4 @@
+/* eslint-disable */
 // prerender-spa-plugin 官方包依赖 puppeteer，下载成本过高
 // fork 至此处掩盖问题
 

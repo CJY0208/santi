@@ -1,18 +1,18 @@
 // 开发阶段使用
 const httpProxy = require('http-proxy-middleware')
-const portFinder = require('portFinder')
+const portFinder = require('portfinder')
 
 const Server = require('./Server')
 
-const proxy = ({ logError = true } = {}) => {
+const proxy = ({ logError = true, ...ssrConfig } = {}) => {
   let ssrProxy
   const devServerHost = `http://127.0.0.1:${process.env.PORT}`
 
   const ssr = new Server({
-    log: false,
+    ...ssrConfig,
+    log: true,
     server: devServerHost,
     renderAfterDocumentEvent: 'snapshotable',
-    renderAfterTimeout: 1000,
     deferHeadScripts: true,
     inlinePrimaryStyle: false,
     useResourceCache: false,
@@ -26,7 +26,7 @@ const proxy = ({ logError = true } = {}) => {
 
   const ssrFilter = (pathname, req) => {
     const { referer, accept } = req.headers
-    return isHTML(accept) && referer !== 'https://jsdom.ssr.org/'
+    return isHTML(accept) && referer !== 'jsdom://engine'
   }
 
   ssrFilter.toString = () => 'SSRServer'

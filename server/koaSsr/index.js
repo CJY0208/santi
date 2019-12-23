@@ -54,7 +54,9 @@ module.exports = function ssr({
       }
 
       try {
-        const html = await render(ctx.request.url)
+        const html = await render(ctx.request.url, {
+          cookie: ctx.request.headers.cookie
+        })
 
         ctx.body = html
         return applyCompress(ctx, next)

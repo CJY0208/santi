@@ -11,7 +11,7 @@ const getInitialProps = (fetch, fallback = null, key) => Component => {
     const [ssrProps, setSsrProps] = useState({})
     const mounted = useRef(true)
     const { getCountedSID } = useSID()
-    const sid = run(getCountedSID) || key
+    const sid = key || run(getCountedSID)
 
     useEffect(() => {
       async function init() {
@@ -24,7 +24,7 @@ const getInitialProps = (fetch, fallback = null, key) => Component => {
           return
         }
 
-        if (mounted.current) {
+        if (mounted.current && ssrProps) {
           setSsrProps(ssrProps)
           setReady(true)
         }
@@ -40,7 +40,7 @@ const getInitialProps = (fetch, fallback = null, key) => Component => {
     return ready ? (
       <Component {...{ ...props, ...ssrProps }} ref={forwardedRef} />
     ) : (
-      run(fallback)
+      run(fallback, undefined, props)
     )
   }
 
