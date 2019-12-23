@@ -3,8 +3,8 @@ import hoistStatics from 'hoist-non-react-statics'
 
 import SidProvider from './components/SidProvider'
 
-const santiContext = createContext()
-const { Provider } = santiContext
+const context = createContext()
+const { Provider } = context
 
 function withSanti(Component) {
   function WrappedComponent({ forwardRef, __sid: sid, ...props }) {
@@ -34,7 +34,12 @@ function withSanti(Component) {
 }
 
 export function useSID() {
-  return useContext(santiContext) || {}
+  return (
+    useContext(context) || {
+      sid: undefined,
+      getCountedSID: () => undefined
+    }
+  )
 }
 
 export default withSanti

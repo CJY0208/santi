@@ -1,32 +1,35 @@
-const Koa = require('koa')
-const serve = require('koa-static')
-const compress = require('koa-compress')
+const compression = require('compression')
+const express = require('express')
+const httpProxy = require('http-proxy-middleware')
 
-const { paths } = require('../../../server')
+const { getConfig, paths } = require('../../../server')
 
-const DEFAULT = {
-  compress: {
-    threshold: 4096
-  },
-  static: {
-    maxAge: 365 * 24 * 60 * 60 * 1000,
-    immutable: true,
 
-    // 需要存在 .gz 文件时才能生效
-    // https://github.com/koajs/send/blob/5.0.0/index.js#L80
-    gzip: true
-  }
+const EXPRESS_DEFAULT = {
+  compress: {},
+  static: {}
 }
 
-function run(config = DEFAULT, port) {
-  const app = new Koa()
+function runExpress(config = EXPRESS_DEFAULT, port) {
+  const { proxy: configProxy } = getConfig()
 
-  app.use(compress(config.compress))
-  app.use(serve(paths.appBuild, config.static))
+  const app = express()
+
+  app.use(compression()) // gzip 压缩
+
+  Object.entries(configProxy).forEach(([key, proxy]) => {
+    app.use(key, httpProxy(proxy))
+  })
+
+  app.use(
+    express.static(paths.appBuild, {
+      extensions: ['html']
+    })
+  )
 
   app.listen(port, () => {
-    console.log(`listening on port ${port}`)
+    console.log(`[SPA] Express server listening on port ${port}`)
   })
 }
 
-module.exports = run
+module.exports = runExpress

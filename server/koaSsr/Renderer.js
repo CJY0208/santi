@@ -1,4 +1,4 @@
-const Prerenderer = require('@prerenderer/prerenderer')
+const Prerenderer = require('./Prerenderer')
 
 const JSDOMPrerenderer = require('../JSDOMPrerenderer')
 const renderWithJSDOM = require('../renderWithJSDOM')
@@ -14,6 +14,7 @@ module.exports = class Renderer {
     resultCacheTimeout = -1,
     useTaskCache = false,
     taskCacheTimeout = -1,
+    proxy,
     ...rendererConfig
   }) {
     this.config = {
@@ -25,6 +26,9 @@ module.exports = class Renderer {
       const prerender = new Prerenderer({
         // Required - The path to the app to prerender. Should have an index.html and any other needed assets.
         staticDir,
+        server: {
+          proxy
+        },
         // The plugin that actually renders the page.
         renderer: new JSDOMPrerenderer(this.config)
       })
@@ -32,16 +36,20 @@ module.exports = class Renderer {
       prerender.initialize()
 
       this.renderer = {
-        render: routeUrl =>
+        render: (routeUrl, { cookie } = {}) =>
           prerender
-            .renderRoutes([routeUrl])
+            .renderRoutes([routeUrl], { cookie })
             .then(([renderedRoute]) => renderedRoute.html.trim())
       }
     }
 
     if (server) {
       this.renderer = {
-        render: routeUrl => renderWithJSDOM(`${server}${routeUrl}`, this.config)
+        render: (routeUrl, { cookie } = {}) =>
+          renderWithJSDOM(`${server}${routeUrl}`, {
+            ...this.config,
+            cookie
+          })
       }
     }
 
@@ -57,7 +65,7 @@ module.exports = class Renderer {
     this.render = this.render.bind(this)
   }
 
-  render(routeUrl) {
+  render(routeUrl, ...rest) {
     const taskCache = this.tackCache.get(routeUrl)
     if (taskCache) {
       return taskCache
@@ -70,7 +78,7 @@ module.exports = class Renderer {
 
     const task = new Promise((resolve, reject) => {
       this.renderer
-        .render(routeUrl)
+        .render(routeUrl, ...rest)
         .then(result => {
           this.resultCache.save(routeUrl, result)
           resolve(result)

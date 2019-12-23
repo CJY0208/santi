@@ -1,5 +1,3 @@
-const resources = require('./resources')
-
 const DEFAULT_CONFIG = {
   deferHeadScripts: true,
   asyncHeadScripts: false,
@@ -10,7 +8,7 @@ const DEFAULT_CONFIG = {
   renderAfterTime: undefined
 }
 
-const getPageContent = (dom, config = DEFAULT_CONFIG) =>
+const getPageContent = (dom, config = DEFAULT_CONFIG, resources) =>
   new Promise((resolve, reject) => {
     const options = {
       ...DEFAULT_CONFIG,

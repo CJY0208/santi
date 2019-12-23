@@ -22,7 +22,7 @@ class JSDOMPrerenderer {
     return Promise.resolve()
   }
 
-  renderRoutes(routes, Prerenderer) {
+  renderRoutes(routes, Prerenderer, config = {}) {
     const rootOptions = Prerenderer.getOptions()
 
     const limiter = promiseLimit(this.config.maxConcurrentRoutes)
@@ -32,7 +32,10 @@ class JSDOMPrerenderer {
         limiter(() =>
           renderWithJSDOM(
             `http://127.0.0.1:${rootOptions.server.port}${route}`,
-            this.config
+            {
+              ...this.config,
+              ...config
+            }
           ).then(html => ({
             originalRoute: route,
             route: route,

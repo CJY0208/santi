@@ -1,10 +1,13 @@
+import React from 'react'
 import ReactDOM from 'react-dom'
 
+import Container from './components/Container'
 import { isFunction } from './helpers'
 
 const ROOT_KEY = 'ssr-root'
 
-function render(element, container, callback) {
+function render(content, container, callback) {
+  const element = <Container>{content}</Container>
   // ssr 阶段将内容渲染至动态生成的 ssr-root 节点中
   if (window.__SSR__) {
     let ssrRoot = document.getElementById(ROOT_KEY)

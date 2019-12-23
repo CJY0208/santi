@@ -14,7 +14,7 @@ const warningMissingKey = debounce(() => {
 
 function useState(initialState, key) {
   const { getCountedSID } = useSID()
-  const sid = run(getCountedSID) || key
+  const sid = key || run(getCountedSID)
   const [state, setState] = useReactState(() => {
     if (!sid) {
       warningMissingKey()
@@ -29,7 +29,17 @@ function useState(initialState, key) {
     return value
   })
 
-  return [state, setState]
+  return [
+    state,
+    getNextState => {
+      const nextState = run(getNextState, undefined, state)
+
+      store.set(sid, nextState)
+
+      return setState(nextState)
+    },
+    sid
+  ]
 }
 
 export default useState

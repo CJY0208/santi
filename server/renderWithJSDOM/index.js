@@ -1,9 +1,9 @@
 const jsdom = require('jsdom')
 
-const resources = require('./resources')
+const CustomResourceLoader = require('./CustomResourceLoader')
 const getPageContent = require('./getPageContent')
 
-const { JSDOM } = jsdom
+const { JSDOM, CookieJar } = jsdom
 
 const DEFAULT_CONFIG = {
   inject: {},
@@ -17,15 +17,26 @@ const renderWithJSDOM = async (url, config = {}) => {
     ...config
   }
 
+  const resources = options.useResourceCache
+    ? CustomResourceLoader.defaultResources
+    : new CustomResourceLoader()
+
   resources.localStaticOnly = options.localStaticOnly
-  resources.useCache = options.useResourceCache
 
   try {
+    const cookieJar = new CookieJar()
+
+    if (typeof config.cookie === 'string') {
+      config.cookie.split('; ').forEach(cookie => {
+        cookieJar.setCookieSync(cookie, url)
+      })
+    }
     const dom = await JSDOM.fromURL(url, {
+      resources,
+      cookieJar,
       pretendToBeVisual: true, // fake rAF
       runScripts: 'dangerously',
-      resources,
-      referrer: 'https://jsdom.ssr.org/'
+      referrer: 'jsdom://engine'
     })
 
     const { window } = dom
@@ -45,7 +56,7 @@ const renderWithJSDOM = async (url, config = {}) => {
     // shim
     window.SVGElement = window.HTMLElement
 
-    const content = await getPageContent(dom, options)
+    const content = await getPageContent(dom, options, resources)
 
     return content
   } catch (error) {
