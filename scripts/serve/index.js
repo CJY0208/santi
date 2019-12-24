@@ -1,10 +1,11 @@
 const { getConfig, getPort } = require('../../server')
 
 function run(runConfig = {}) {
-  const { port = getPort(3000), ...config } = runConfig
-
   const cwd = process.cwd()
-  const { mode } = getConfig(cwd)
+  const { port = getPort(3000), mode, ...config } = {
+    ...getConfig(cwd),
+    ...runConfig
+  }
 
   const run = require(`./${mode}`)
 

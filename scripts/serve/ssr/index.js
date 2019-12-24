@@ -13,12 +13,6 @@ const DEFAULT = {
   inject: {
     __SSR__: true
   }
-  // tastCacheConfig: [
-  //   ['default', clear => {
-  //     setTimeout(clear, 300)
-  //   }],
-  //   [/\^\//]
-  // ],
 }
 
 function run(config = DEFAULT, port) {
@@ -26,13 +20,16 @@ function run(config = DEFAULT, port) {
 
   app.use(
     koaSsr({
+      staticDir: paths.appBuild,
       ...DEFAULT,
       ...ssrConfig,
       ...config,
-      proxy: proxyTable,
+      proxy: {
+        ...proxyTable,
+        ...(config.proxy || {})
+      },
       renderAfterTimeout:
         config.renderAfterTimeout || ssrConfig.timeout || 1000,
-      staticDir: paths.appBuild,
       renderAfterDocumentEvent: 'snapshotable',
       inject: {
         ...(ssrConfig.inject || null),
