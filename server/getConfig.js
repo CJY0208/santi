@@ -23,6 +23,11 @@ module.exports = function getConfig(cwd = process.cwd()) {
   const configPath = possibleConfigPaths.find(configPath =>
     fs.existsSync(path.join(cwd, configPath))
   )
+
+  if (!configPath) {
+    return { ...DEFAULT }
+  }
+
   const config = require(path.join(cwd, configPath))
 
   return {
