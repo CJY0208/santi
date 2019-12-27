@@ -26,7 +26,7 @@ const proxy = ({ logError = true, ...ssrConfig } = {}) => {
 
   const ssrFilter = (pathname, req) => {
     const { referer, accept } = req.headers
-    return isHTML(accept) && referer !== 'jsdom://engine'
+    return isHTML(accept) && referer !== 'jsdom://engine/'
   }
 
   ssrFilter.toString = () => 'SSRServer'

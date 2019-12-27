@@ -20,6 +20,7 @@ function render(content, container, callback) {
     let ssrRoot = document.getElementById(ROOT_KEY)
     if (!ssrRoot) {
       ssrRoot = document.createElement('div')
+      ssrRoot.style.cssText = 'width:100%;height:100%;'
       ssrRoot.id = ROOT_KEY
       document.body.insertBefore(ssrRoot, container)
     }

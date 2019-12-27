@@ -36,7 +36,7 @@ const renderWithJSDOM = async (url, config = {}) => {
       cookieJar,
       pretendToBeVisual: true, // fake rAF
       runScripts: 'dangerously',
-      referrer: 'jsdom://engine'
+      referrer: 'jsdom://engine/'
     })
 
     const { window } = dom
