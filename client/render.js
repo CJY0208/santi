@@ -8,6 +8,13 @@ const ROOT_KEY = 'ssr-root'
 
 function render(content, container, callback) {
   const element = <Container>{content}</Container>
+
+  // 支持热加载
+  // FIXME: Dev 阶段会导致渲染抖动
+  if (module.hot) {
+    return ReactDOM.render(element, container, callback)
+  }
+
   // ssr 阶段将内容渲染至动态生成的 ssr-root 节点中
   if (window.__SSR__) {
     let ssrRoot = document.getElementById(ROOT_KEY)
@@ -16,6 +23,7 @@ function render(content, container, callback) {
       ssrRoot.id = ROOT_KEY
       document.body.insertBefore(ssrRoot, container)
     }
+
     return ReactDOM.render(element, ssrRoot, callback)
   }
 

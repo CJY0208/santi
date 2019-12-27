@@ -11,7 +11,7 @@ const getInitialProps = (fetch, fallback = null, key) => Component => {
     const [ssrProps, setSsrProps] = useState({})
     const mounted = useRef(true)
     const { getCountedSID } = useSID()
-    const sid = key || run(getCountedSID)
+    const sid = run(getCountedSID) || key
 
     useEffect(() => {
       async function init() {

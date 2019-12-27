@@ -1,6 +1,6 @@
 {
   "name": "santi",
-  "version": "0.0.0-beta.11",
+  "version": "0.0.0-beta.12",
   "description": "基于 create-react-app 和 jsdom 的 SSR 方案，SPA/预渲染/SSR 三位一体",
   "bin": {
     "santi": "./bin/index.js"
@@ -31,10 +31,8 @@
   },
   "dependencies": {
     "@prerenderer/prerenderer": "^0.7.2",
-    "compression": "^1.7.4",
     "compression-webpack-plugin": "^3.0.1",
     "customize-cra": "^0.9.1",
-    "express": "^4.17.1",
     "hoist-non-react-statics": "^3.3.1",
     "html-minifier": "^4.0.0",
     "http-proxy-middleware": "^0.20.0",
@@ -42,6 +40,7 @@
     "koa": "^2.11.0",
     "koa-compress": "^3.0.0",
     "koa-proxy": "^1.0.0-alpha.3",
+    "koa-send": "^5.0.0",
     "koa-server-http-proxy": "^0.1.0",
     "koa-static": "^5.0.0",
     "opener": "^1.5.1",
