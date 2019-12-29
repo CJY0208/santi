@@ -30,7 +30,7 @@ function run(config = DEFAULT, port) {
       },
       renderAfterTimeout:
         config.renderAfterTimeout || ssrConfig.timeout || 1000,
-      renderAfterDocumentEvent: 'snapshotable',
+      renderAfterDocumentEvent: 'ssr-ready',
       inject: {
         ...(ssrConfig.inject || null),
         ...(config.inject || null),

@@ -6,55 +6,6 @@
   <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#000000" />
-  <script>
-    // https://github.com/amfe/lib-flexible/blob/2.0/index.js
-    (function flexible(window, document) {
-      var docEl = document.documentElement
-      var dpr = window.devicePixelRatio || 1
-      var addEventListener = window.addEventListener
-
-      // adjust body font size
-      function setBodyFontSize() {
-        if (document.body) {
-          document.body.style.fontSize = (12 * dpr) + 'px'
-        }
-        else {
-          addEventListener.call(document, 'DOMContentLoaded', setBodyFontSize)
-        }
-      }
-      setBodyFontSize();
-
-      // set 1rem = viewWidth / 10
-      function setRemUnit() {
-        var rem = docEl.clientWidth / 10
-        rem = rem > 50 ? 50 : rem
-        docEl.style.fontSize = rem + 'px'
-      }
-
-      setRemUnit()
-
-      // reset rem unit on page resize
-      addEventListener('resize', setRemUnit)
-      addEventListener('pageshow', function (e) {
-        if (e.persisted) {
-          setRemUnit()
-        }
-      })
-
-      // // detect 0.5px supports
-      // if (dpr >= 2) {
-      //   var fakeBody = document.createElement('body')
-      //   var testElement = document.createElement('div')
-      //   testElement.style.border = '.5px solid transparent'
-      //   fakeBody.appendChild(testElement)
-      //   docEl.appendChild(fakeBody)
-      //   if (testElement.offsetHeight === 1) {
-      //     docEl.classList.add('hairlines')
-      //   }
-      //   docEl.removeChild(fakeBody)
-      // }
-    }(window, document))
-  </script>
   <meta name="description" content="Web site created using create-react-app" />
   <link rel="apple-touch-icon" href="logo192.png" />
   <!--
@@ -71,7 +22,7 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-  <title>AFI</title>
+  <title>React App</title>
 </head>
 
 <body>

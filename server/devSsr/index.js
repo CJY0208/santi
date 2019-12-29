@@ -12,7 +12,7 @@ const proxy = ({ logError = true, ...ssrConfig } = {}) => {
     ...ssrConfig,
     log: true,
     server: devServerHost,
-    renderAfterDocumentEvent: 'snapshotable',
+    renderAfterDocumentEvent: 'ssr-ready',
     deferHeadScripts: true,
     inlinePrimaryStyle: false,
     useResourceCache: false,

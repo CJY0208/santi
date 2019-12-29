@@ -15,7 +15,8 @@ SSR 功能基于 jsdom，每次渲染需启动 jsdom 沙盒，相对于 React �
 - [x] SSR 使用沙盒渲染，无需关注同构时的内存泄漏问题
 - [x] SPA、预渲染、SSR 功能渐进式开启或关闭
 - [x] 性能良好（搭配合理的缓存，单核心 500QPS + 20ms/AVG 响应）
-- [ ] SSR 页面 + 组件级缓存，自由控制
+- [x] SSR 页面级缓存，自由控制
+- [ ] SSR 组件级缓存
 - [ ] SSR 分片支持
 
 ## 兼容性
@@ -55,7 +56,7 @@ SSR 功能基于 jsdom，每次渲染需启动 jsdom 沙盒，相对于 React �
    +   "serve": "santi serve",
        ...
       },
-   + "config-overrides-path": "./node_modules/santi/config",
+   + "config-overrides-path": "node_modules/santi/config",
      ...
    }
    ```
@@ -73,7 +74,7 @@ SSR 功能基于 jsdom，每次渲染需启动 jsdom 沙盒，相对于 React �
 
 - [x] ~~State~~
 - [x] ~~Async props~~
-- [ ] View cache config
+- [x] ~~View cache config~~
 - [ ] Component cache config
 - [ ] Fragmented transmission
 

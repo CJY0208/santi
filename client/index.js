@@ -1,10 +1,10 @@
 import useState from './useState'
 import getInitialProps from './getInitialProps'
-import snapshot from './snapshot'
+import ready from './ready'
 import render from './render'
 import store from './store'
 import withSanti, { useSID } from './withSanti'
-import Snapshot from './components/Snapshot'
+import Ready from './components/Ready'
 import NoSSR from './components/NoSSR'
 
 export default {
@@ -12,10 +12,10 @@ export default {
   store,
   useState,
   getInitialProps,
-  snapshot,
+  ready,
   withSanti,
   useSID,
-  Snapshot,
+  Ready,
   NoSSR
 }
 
@@ -24,9 +24,9 @@ export {
   store,
   useState,
   getInitialProps,
-  snapshot,
+  ready,
   withSanti,
   useSID,
-  Snapshot,
+  Ready,
   NoSSR
 }

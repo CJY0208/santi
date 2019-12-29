@@ -2,21 +2,11 @@ const Prerenderer = require('./Prerenderer')
 
 const JSDOMPrerenderer = require('../JSDOMPrerenderer')
 const renderWithJSDOM = require('../renderWithJSDOM')
-const Cache = require('./Cache')
 
 const DEFAULT_RENDERER_CONFIG = {}
 
 module.exports = class Renderer {
-  constructor({
-    staticDir,
-    server,
-    useResultCache = false,
-    resultCacheTimeout = -1,
-    useTaskCache = false,
-    taskCacheTimeout = -1,
-    proxy,
-    ...rendererConfig
-  }) {
+  constructor({ staticDir, server, proxy, ...rendererConfig }) {
     this.config = {
       ...DEFAULT_RENDERER_CONFIG,
       ...rendererConfig
@@ -36,65 +26,36 @@ module.exports = class Renderer {
       prerender.initialize()
 
       this.renderer = {
-        render: (routeUrl, { cookie } = {}) =>
+        render: (routeUrl, config = {}) =>
           prerender
-            .renderRoutes([routeUrl], { cookie })
+            .renderRoutes([routeUrl], config)
             .then(([renderedRoute]) => renderedRoute.html.trim())
       }
     }
 
     if (server) {
       this.renderer = {
-        render: (routeUrl, { cookie } = {}) =>
+        render: (
+          routeUrl,
+          { cookie, inject = {}, timeout = this.config.renderAfterTimeout } = {}
+        ) =>
           renderWithJSDOM(`${server}${routeUrl}`, {
             ...this.config,
-            cookie
+            renderAfterTimeout: timeout,
+            cookie,
+            inject: {
+              ...(inject || {}),
+              ...(this.config.inject || {})
+            }
           })
       }
     }
-
-    this.tackCache = new Cache({
-      useCache: useTaskCache,
-      removeAfterTimeout: taskCacheTimeout
-    })
-    this.resultCache = new Cache({
-      useCache: useResultCache,
-      removeAfterTimeout: resultCacheTimeout
-    })
 
     this.render = this.render.bind(this)
   }
 
   render(routeUrl, ...rest) {
-    const taskCache = this.tackCache.get(routeUrl)
-    if (taskCache) {
-      return taskCache
-    }
-
-    const resultCache = this.resultCache.get(routeUrl)
-    if (resultCache) {
-      return Promise.resolve(resultCache)
-    }
-
-    const task = new Promise((resolve, reject) => {
-      this.renderer
-        .render(routeUrl, ...rest)
-        .then(result => {
-          this.resultCache.save(routeUrl, result)
-          resolve(result)
-        })
-        .catch(err => {
-          this.tackCache.remove(routeUrl)
-          this.resultCache.remove(routeUrl)
-
-          console.error('[render error]', err)
-          reject(err)
-        })
-    })
-
-    this.tackCache.save(routeUrl, task)
-
-    return task
+    return this.renderer.render(routeUrl, ...rest)
   }
 
   // TODO: 待实现

@@ -44,7 +44,7 @@ module.exports = {
               renderer: new JSDOMPrerenderer({
                 ...rendererConfig,
                 renderAfterTimeout: rendererConfig.timeout || 1000,
-                renderAfterDocumentEvent: 'snapshotable',
+                renderAfterDocumentEvent: 'ssr-ready',
                 useResourceCache: false,
                 inject: {
                   ...(rendererConfig.inject || null),

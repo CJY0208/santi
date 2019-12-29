@@ -34,7 +34,13 @@ class JSDOMPrerenderer {
             `http://127.0.0.1:${rootOptions.server.port}${route}`,
             {
               ...this.config,
-              ...config
+              ...config,
+              renderAfterTimeout:
+                config.timeout || this.config.renderAfterTimeout,
+              inject: {
+                ...(config.inject || {}),
+                ...(this.config.inject || {})
+              }
             }
           ).then(html => ({
             originalRoute: route,

@@ -52,13 +52,13 @@ function render(content, container, callback) {
       }, 56)
     }
 
-    // 若为快照 ssr 则 csr 阶段将同样收到 snapshotable 事件，在此事件后平滑呈现真实可用交互
-    if (window.__SNAPSHOTED__) {
-      function onSnapshotable() {
+    // 若为快照 ssr 则 csr 阶段将同样收到 ssr-ready 事件，在此事件后平滑呈现真实可用交互
+    if (window.__SSRREADY__) {
+      function onReady() {
         display()
-        document.removeEventListener('snapshotable', onSnapshotable)
+        document.removeEventListener('ssr-ready', onReady)
       }
-      document.addEventListener('snapshotable', onSnapshotable)
+      document.addEventListener('ssr-ready', onReady)
     } else {
       // 若不为快照 ssr（一般为超时自动快照），则在 render 回调结束后呈现真实结果
       renderCallback = function(...args) {

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { useState, getInitialProps, Snapshot, render } from 'santi'
+import { useState, getInitialProps, Ready, render } from 'santi'
 
 const delay = time => new Promise(resolve => setTimeout(resolve, time))
 
@@ -23,12 +23,12 @@ const App = getInitialProps(async () => {
   }, [])
 
   return (
-    <Snapshot.OnMount>
+    <Ready.OnMount>
       <div>
         Prop from SSR: {prop}
         State from SSR: {state}
       </div>
-    </Snapshot.OnMount>
+    </Ready.OnMount>
   )
 })
 
