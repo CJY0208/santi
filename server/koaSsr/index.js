@@ -5,14 +5,27 @@ const qs = require('qs')
 
 const Renderer = require('./Renderer')
 
-const cacheMap = new Map()
 const renderTaskMap = new Map()
+const defaultCacheMap = new Map()
+const defaultCacheEngine = {
+  get: key => defaultCacheMap.get(key),
+  set: (key, value, { maxAge } = {}) => {
+    if (typeof maxAge === 'number' && maxAge > 0) {
+      setTimeout(() => {
+        defaultCacheMap.del(key)
+      }, maxAge)
+    } else {
+      defaultCacheMap.set(key, value)
+    }
+  }
+}
 
 module.exports = function ssr({
   staticDir,
   server,
   log = true,
   renderConfig: renderConfigTable = {},
+  cacheEngine = defaultCacheEngine,
   ...rendererConfig
 } = {}) {
   let count = 0
@@ -85,31 +98,44 @@ module.exports = function ssr({
           }
         })
 
+        if (log) {
+          console.log(
+            `[${times}] "${ctx.request.url}" no render config, forced rendered`
+          )
+        }
         ctx.body = html
         return applyCompress(ctx, next)
       }
 
+      const { key } = renderConfig
       const useCache = !!renderConfig.cache
       const cacheConfig =
         renderConfig.cache === true ? {} : renderConfig.cache || {}
 
-      if (useCache) {
-        const cache = !cacheConfig.forceUpdate
-          ? cacheMap.get(renderConfig.key)
-          : null
+      const cache =
+        useCache && !cacheConfig.forceUpdate ? await cacheEngine.get(key) : null
 
-        if (cache) {
-          ctx.body = cache
-          return applyCompress(ctx, next)
+      if (cache) {
+        ctx.body = cache
+        if (log) {
+          console.log(
+            `[${times}] "${ctx.request.url}" from cache with key: ${key}`
+          )
         }
+        return applyCompress(ctx, next)
       }
 
-      let renderTask = renderTaskMap.get(renderConfig.key)
+      let renderTask = renderTaskMap.get(key)
 
       if (renderTask) {
         const html = await renderTask
 
         ctx.body = html
+        if (log) {
+          console.log(
+            `[${times}] "${ctx.request.url}" from exist render task with key: ${key}`
+          )
+        }
         return applyCompress(ctx, next)
       }
 
@@ -122,21 +148,20 @@ module.exports = function ssr({
         }
       })
 
-      renderTaskMap.set(renderConfig.key)
+      renderTaskMap.set(key)
 
       const html = await renderTask
 
       if (useCache) {
-        cacheMap.set(renderConfig.key, html)
-
-        if (typeof cacheConfig.maxAge === 'number' && cacheConfig.maxAge > 0) {
-          setTimeout(() => {
-            cacheMap.delete(renderConfig.key)
-          }, cacheConfig.maxAge)
-        }
+        await cacheEngine.set(key, html, {
+          maxAge: cacheConfig.maxAge
+        })
       }
 
       ctx.body = html
+      if (log) {
+        console.log(`[${times}] "${ctx.request.url}" render with key: ${key}`)
+      }
       return applyCompress(ctx, next)
     } catch (err) {
       console.error('[ssr error]', err)
