@@ -10,12 +10,11 @@ const defaultCacheMap = new Map()
 const defaultCacheEngine = {
   get: key => defaultCacheMap.get(key),
   set: (key, value, { maxAge } = {}) => {
+    defaultCacheMap.set(key, value)
     if (typeof maxAge === 'number' && maxAge > 0) {
       setTimeout(() => {
-        defaultCacheMap.del(key)
+        defaultCacheMap.delete(key)
       }, maxAge)
-    } else {
-      defaultCacheMap.set(key, value)
     }
   }
 }
