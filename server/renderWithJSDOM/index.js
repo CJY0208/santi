@@ -24,13 +24,19 @@ const renderWithJSDOM = async (url, config = {}) => {
   resources.localStaticOnly = options.localStaticOnly
 
   try {
-    const cookieJar = new CookieJar()
+    let cookieJar
+
+    if (config.cookie instanceof CookieJar) {
+      cookieJar = config.cookie
+    }
 
     if (typeof config.cookie === 'string') {
+      cookieJar = new CookieJar()
       config.cookie.split('; ').forEach(cookie => {
         cookieJar.setCookieSync(cookie, url)
       })
     }
+
     const dom = await JSDOM.fromURL(url, {
       resources,
       cookieJar,

@@ -1,6 +1,7 @@
 const serve = require('koa-static')
 const proxy = require('koa-proxy')
 const compress = require('koa-compress')
+const qs = require('qs')
 
 const Renderer = require('./Renderer')
 
@@ -59,19 +60,22 @@ module.exports = function ssr({
       console.time(`[${times}] "${ctx.request.url}" rendered after`)
     }
 
+    const __REQUEST__ = {
+      href: ctx.request.href,
+      url: ctx.request.url,
+      path: ctx.request.path,
+      query: ctx.request.query,
+      cookie: qs.parse(ctx.request.headers.cookie, { delimiter: '; ' }),
+      headers: ctx.request.headers,
+      URL: ctx.request.URL
+    }
+
     const getRenderConfig = renderConfigTable[ctx.request.path]
     const renderConfig =
       typeof getRenderConfig === 'function'
-        ? getRenderConfig(ctx.request)
+        ? getRenderConfig(__REQUEST__)
         : getRenderConfig || null
 
-    const __REQUEST__ = {
-      url: ctx.request.url,
-      queryString: ctx.request.queryString,
-      path: ctx.request.path
-    }
-
-    // 处理逻辑参考 ./docs/renderConfig.jpg
     try {
       if (!renderConfig) {
         const html = await render(ctx.request.url, {

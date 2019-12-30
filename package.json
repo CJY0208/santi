@@ -1,6 +1,6 @@
 {
   "name": "santi",
-  "version": "0.0.0-beta.14",
+  "version": "0.0.0-beta.15",
   "description": "基于 create-react-app 和 jsdom 的 SSR 方案，SPA/预渲染/SSR 三位一体",
   "bin": {
     "santi": "./bin/index.js"
@@ -46,6 +46,7 @@
     "opener": "^1.5.1",
     "portfinder": "^1.0.25",
     "promise-limit": "^2.7.0",
+    "qs": "^6.9.1",
     "react-activation": "^0.3.4",
     "react-app-rewired": "^2.1.5",
     "react-scripts": "^3.3.0",
