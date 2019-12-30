@@ -2,8 +2,7 @@ const Koa = require('koa')
 const koaCompress = require('koa-compress')
 const httpProxy = require('koa-server-http-proxy')
 
-const koaStatic = require('./koaStatic')
-const { getConfig, paths } = require('../../../server')
+const { getConfig, paths, koaFallbackStatic } = require('../../../server')
 
 const KOA_DEFAULT = {
   compress: {
@@ -30,31 +29,12 @@ function runKoa(config = KOA_DEFAULT, port) {
     ...config
   }
   const app = new Koa()
-  const serveStatic = koaStatic(staticDir, staticOpts)
 
   Object.entries(proxyTable).forEach(([context, options]) => {
     app.use(httpProxy(context, options))
   })
   app.use(koaCompress(config.compress))
-  app.use(async (ctx, next) => {
-    if (
-      /\.html$/.test(ctx.request.url) ||
-      !/text\/html/.test(ctx.header.accept)
-    ) {
-      return await serveStatic(ctx, next)
-    }
-
-    try {
-      await serveStatic(ctx, next)
-    } catch (err) {
-      if (err.status === 404) {
-        ctx.request.url = '/'
-        return await serveStatic(ctx, next)
-      } else {
-        throw err
-      }
-    }
-  })
+  app.use(koaFallbackStatic(staticDir, staticOpts))
 
   app.listen(port, () => {
     console.log(`[SPA] Koa2 server listening on port ${port}`)

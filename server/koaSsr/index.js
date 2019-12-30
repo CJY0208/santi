@@ -1,9 +1,9 @@
-const serve = require('koa-static')
 const proxy = require('koa-proxy')
 const compress = require('koa-compress')
 const qs = require('qs')
 
 const Renderer = require('./Renderer')
+const koaFallbackStatic = require('../koaFallbackStatic')
 
 const renderTaskMap = new Map()
 const defaultCacheMap = new Map()
@@ -30,7 +30,7 @@ module.exports = function ssr({
   let count = 0
 
   const redirect = staticDir
-    ? serve(staticDir, {
+    ? koaFallbackStatic(staticDir, {
         maxAge: 365 * 24 * 60 * 60 * 1000,
         immutable: true,
 
@@ -89,7 +89,7 @@ module.exports = function ssr({
         : getRenderConfig || null
 
     try {
-      if (!renderConfig) {
+      if (typeof renderConfig === 'undefined') {
         const html = await render(ctx.request.url, {
           cookie: ctx.request.headers.cookie,
           inject: {
@@ -104,6 +104,15 @@ module.exports = function ssr({
         }
         ctx.body = html
         return applyCompress(ctx, next)
+      }
+
+      if (renderConfig.ssr === false) {
+        if (log) {
+          console.log(
+            `[${times}] "${ctx.request.url}" don't use ssr, return static entry`
+          )
+        }
+        return redirect(ctx, next)
       }
 
       const { key } = renderConfig

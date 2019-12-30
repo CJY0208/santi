@@ -1,7 +1,7 @@
 {
   "name": "santi",
-  "version": "0.0.0-beta.17",
-  "description": "基于 create-react-app 和 jsdom 的 SSR 方案，SPA/预渲染/SSR 三位一体",
+  "version": "0.0.0-beta.18",
+  "description": "Isomorphic framework for base on create-react-app and jsdom",
   "bin": {
     "santi": "./bin/index.js"
   },
@@ -13,7 +13,10 @@
     "server-side rendering",
     "react",
     "preact",
-    "prerender"
+    "prerender",
+    "isomorphic framework",
+    "create-react-app",
+    "nextjs"
   ],
   "author": "CJY0208",
   "license": "ISC",
@@ -42,7 +45,6 @@
     "koa-proxy": "^1.0.0-alpha.3",
     "koa-send": "^5.0.0",
     "koa-server-http-proxy": "^0.1.0",
-    "koa-static": "^5.0.0",
     "opener": "^1.5.1",
     "portfinder": "^1.0.25",
     "promise-limit": "^2.7.0",

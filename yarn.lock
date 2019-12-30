@@ -6377,14 +6377,6 @@ koa-server-http-proxy@^0.1.0:
     http-proxy-middleware "^0.18.0"
     koa2-connect "^1.0.2"
 
-koa-static@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.npmjs.org/koa-static/-/koa-static-5.0.0.tgz#5e92fc96b537ad5219f425319c95b64772776943"
-  integrity sha512-UqyYyH5YEXaJrf9S8E23GoJFQZXkBVJ9zYYMPGz919MSX1KuvAcycIuS0ci150HCoPf4XQVhQ84Qf8xRPWxFaQ==
-  dependencies:
-    debug "^3.1.0"
-    koa-send "^5.0.0"
-
 koa2-connect@^1.0.2:
   version "1.0.2"
   resolved "https://registry.npmjs.org/koa2-connect/-/koa2-connect-1.0.2.tgz#cf196d70a4e6a055f717522768d26cdfc5396f7b"

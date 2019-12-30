@@ -1,4 +1,5 @@
 const Koa = require('koa')
+const koaCompress = require('koa-compress')
 const httpProxy = require('koa-server-http-proxy')
 
 const { paths, koaSsr, getConfig } = require('../../../server')
@@ -17,6 +18,15 @@ const DEFAULT = {
 
 function run(config = DEFAULT, port) {
   const app = new Koa()
+
+  Object.entries(proxyTable).forEach(([context, options]) => {
+    app.use(httpProxy(context, options))
+  })
+  app.use(
+    koaCompress({
+      threshold: 4096
+    })
+  )
 
   app.use(
     koaSsr({
@@ -38,10 +48,6 @@ function run(config = DEFAULT, port) {
       }
     })
   )
-
-  Object.entries(proxyTable).forEach(([context, options]) => {
-    app.use(httpProxy(context, options))
-  })
 
   app.listen(port, () => {
     console.log(`[SSR] Koa server listening on port ${port}`)

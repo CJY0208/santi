@@ -1,4 +1,5 @@
 const koaSsr = require('./koaSsr')
+const koaFallbackStatic = require('./koaFallbackStatic')
 const renderWithJSDOM = require('./renderWithJSDOM')
 const JSDOMPrerenderer = require('./JSDOMPrerenderer')
 const getPort = require('./getPort')
@@ -8,6 +9,7 @@ const paths = require('./paths')
 
 module.exports = {
   koaSsr,
+  koaFallbackStatic,
   renderWithJSDOM,
   JSDOMPrerenderer,
   devSsr,
