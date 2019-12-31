@@ -1,8 +1,16 @@
 const proxy = require('koa-proxy')
 const compress = require('koa-compress')
-const qs = require('qs')
+const qs = require('qs') // https://github.com/ljharb/qs
+const micromatch = require('micromatch') // https://github.com/micromatch/micromatch
 
 const Renderer = require('./Renderer')
+const {
+  isUndefined,
+  isFunction,
+  isNumber,
+  isString,
+  isPromiseLike
+} = require('../helpers/base/is')
 const koaFallbackStatic = require('../koaFallbackStatic')
 
 const renderTaskMap = new Map()
@@ -11,7 +19,7 @@ const defaultCacheEngine = {
   get: key => defaultCacheMap.get(key),
   set: (key, value, { maxAge } = {}) => {
     defaultCacheMap.set(key, value)
-    if (typeof maxAge === 'number' && maxAge > 0) {
+    if (isNumber(maxAge) && maxAge > 0) {
       setTimeout(() => {
         defaultCacheMap.delete(key)
       }, maxAge)
@@ -22,7 +30,7 @@ const defaultCacheEngine = {
 module.exports = function ssr({
   staticDir,
   server,
-  log = true,
+  log: useLog = true,
   renderConfig: renderConfigTable = {},
   cacheEngine = defaultCacheEngine,
   ...rendererConfig
@@ -36,7 +44,8 @@ module.exports = function ssr({
 
         // 需要存在 .gz 文件时才能生效
         // https://github.com/koajs/send/blob/5.0.0/index.js#L80
-        gzip: true
+        gzip: true,
+        fallback: '__root.html'
       })
     : server
     ? proxy({
@@ -55,6 +64,12 @@ module.exports = function ssr({
     ...rendererConfig
   })
 
+  const log = useLog
+    ? (...args) => {
+        console.log(...args)
+      }
+    : () => null
+
   return async (ctx, next) => {
     // 不处理非 html 或 .html 结尾的请求
     if (
@@ -66,10 +81,10 @@ module.exports = function ssr({
     }
 
     let times
-    if (log) {
+    if (useLog) {
       times = ++count
 
-      console.time(`[${times}] "${ctx.request.url}" rendered after`)
+      console.time(`[${times}] "${ctx.request.url}" finished after`)
     }
 
     const __REQUEST__ = {
@@ -82,14 +97,38 @@ module.exports = function ssr({
       URL: ctx.request.URL
     }
 
-    const getRenderConfig = renderConfigTable[ctx.request.path]
-    const renderConfig =
-      typeof getRenderConfig === 'function'
-        ? getRenderConfig(__REQUEST__)
-        : getRenderConfig || null
+    const getRenderConfigEntries = renderConfigTable.find(([key]) =>
+      micromatch.isMatch(ctx.request.url, key)
+    )
+    const getRenderConfig = !!getRenderConfigEntries
+      ? getRenderConfigEntries[1]
+      : undefined
+    const renderConfig = isFunction(getRenderConfig)
+      ? getRenderConfig(__REQUEST__)
+      : getRenderConfig
+
+    const useSsr =
+      isUndefined(renderConfig) ||
+      isUndefined(renderConfig.ssr) ||
+      !!renderConfig.ssr
+    const { key } = renderConfig || {}
+
+    if (useLog) {
+      if (getRenderConfigEntries[0]) {
+        log(
+          `[${times}] "${
+            ctx.request.url
+          }" matched render config: ${JSON.stringify(
+            getRenderConfigEntries[0]
+          )}`
+        )
+      } else {
+        log(`[${times}] "${ctx.request.url}" match no any render config`)
+      }
+    }
 
     try {
-      if (typeof renderConfig === 'undefined') {
+      if (useSsr && isUndefined(key)) {
         const html = await render(ctx.request.url, {
           cookie: ctx.request.headers.cookie,
           inject: {
@@ -97,53 +136,42 @@ module.exports = function ssr({
           }
         })
 
-        if (log) {
-          console.log(
-            `[${times}] "${ctx.request.url}" no render config, forced rendered`
-          )
-        }
+        log(`[${times}] "${ctx.request.url}" no render config, forced rendered`)
         ctx.body = html
         return applyCompress(ctx, next)
       }
 
-      if (renderConfig.ssr === false) {
-        if (log) {
-          console.log(
-            `[${times}] "${ctx.request.url}" don't use ssr, return static entry`
-          )
-        }
+      if (!useSsr) {
+        log(
+          `[${times}] "${ctx.request.url}" don't use ssr, return static entry`
+        )
         return redirect(ctx, next)
       }
 
-      const { key } = renderConfig
       const useCache = !!renderConfig.cache
       const cacheConfig =
         renderConfig.cache === true ? {} : renderConfig.cache || {}
 
       const cache =
-        useCache && !cacheConfig.forceUpdate ? await cacheEngine.get(key) : null
+        useCache && !cacheConfig.forceUpdate
+          ? await cacheEngine.get(key)
+          : undefined
 
-      if (cache) {
+      if (isString(cache)) {
         ctx.body = cache
-        if (log) {
-          console.log(
-            `[${times}] "${ctx.request.url}" from cache with key: ${key}`
-          )
-        }
+        log(`[${times}] "${ctx.request.url}" from cache with key: ${key}`)
         return applyCompress(ctx, next)
       }
 
       let renderTask = renderTaskMap.get(key)
 
-      if (renderTask) {
-        const html = await renderTask
+      if (isPromiseLike(renderTask)) {
+        const htmlContent = await renderTask
 
-        ctx.body = html
-        if (log) {
-          console.log(
-            `[${times}] "${ctx.request.url}" from exist render task with key: ${key}`
-          )
-        }
+        ctx.body = htmlContent
+        log(
+          `[${times}] "${ctx.request.url}" from exist render task with key: ${key}`
+        )
         return applyCompress(ctx, next)
       }
 
@@ -156,27 +184,27 @@ module.exports = function ssr({
         }
       })
 
-      renderTaskMap.set(key)
+      renderTaskMap.set(key, renderTask)
 
-      const html = await renderTask
+      const htmlContent = await renderTask
+
+      renderTaskMap.delete(key)
 
       if (useCache) {
-        await cacheEngine.set(key, html, {
+        await cacheEngine.set(key, htmlContent, {
           maxAge: cacheConfig.maxAge
         })
       }
 
-      ctx.body = html
-      if (log) {
-        console.log(`[${times}] "${ctx.request.url}" render with key: ${key}`)
-      }
+      ctx.body = htmlContent
+      log(`[${times}] "${ctx.request.url}" render with key: ${key}`)
       return applyCompress(ctx, next)
     } catch (err) {
-      console.error('[ssr error]', err)
+      console.error(`[${times}] ssr error!`, err)
       return redirect(ctx, next)
     } finally {
-      if (log) {
-        console.timeEnd(`[${times}] "${ctx.request.url}" rendered after`)
+      if (useLog) {
+        console.timeEnd(`[${times}] "${ctx.request.url}" finished after`)
       }
     }
   }

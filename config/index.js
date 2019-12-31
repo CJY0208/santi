@@ -7,6 +7,7 @@ const {
 } = require('customize-cra')
 const { argv } = require('yargs')
 const CompressionPlugin = require('compression-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const PrerenderSPAPlugin = require('./PrerenderSPAPlugin')
 const { getConfig, paths, JSDOMPrerenderer } = require('../server')
@@ -31,6 +32,35 @@ module.exports = {
 
       // 启用 webpack-bundle-analyzer 分析，命令行中使用 --analyze 生效
       argv.analyze ? addBundleVisualizer() : undefined,
+
+      addWebpackPlugin(
+        new HtmlWebpackPlugin(
+          Object.assign(
+            {},
+            {
+              filename: '__root.html',
+              inject: true,
+              template: paths.appHtml
+            },
+            process.env.NODE_ENV === 'production'
+              ? {
+                  minify: {
+                    removeComments: true,
+                    collapseWhitespace: true,
+                    removeRedundantAttributes: true,
+                    useShortDoctype: true,
+                    removeEmptyAttributes: true,
+                    removeStyleLinkTypeAttributes: true,
+                    keepClosingSlash: true,
+                    minifyJS: true,
+                    minifyCSS: true,
+                    minifyURLs: true
+                  }
+                }
+              : undefined
+          )
+        )
+      ),
 
       // 预渲染插件
       // https://github.com/chrisvfritz/prerender-spa-plugin

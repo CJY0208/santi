@@ -34,7 +34,12 @@ function runKoa(config = KOA_DEFAULT, port) {
     app.use(httpProxy(context, options))
   })
   app.use(koaCompress(config.compress))
-  app.use(koaFallbackStatic(staticDir, staticOpts))
+  app.use(
+    koaFallbackStatic(staticDir, {
+      ...staticOpts,
+      fallback: '__root.html'
+    })
+  )
 
   app.listen(port, () => {
     console.log(`[SPA] Koa2 server listening on port ${port}`)
