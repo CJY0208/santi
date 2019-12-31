@@ -2,7 +2,7 @@
 
 基于 [create-react-app](https://create-react-app.dev/) 和 [jsdom](https://github.com/jsdom/jsdom) 的同构方案，SPA/预渲染/SSR 三位一体
 
-SSR 功能基于 jsdom，每次渲染需启动 jsdom 沙盒，相对于 React 官方 renderToString 方案存在较大性能差异
+SSR 功能基于 jsdom，每次渲染需启动 jsdom 沙盒，相对于 React 官方 renderToString 方案存在较大性能差异，因此项目将重点着力于缓存控制的实现
 
 目前主要针对低并发高可用性或高并发低可用性等低计算量场景
 
