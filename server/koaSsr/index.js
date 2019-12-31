@@ -28,6 +28,7 @@ const defaultCacheEngine = {
 }
 
 module.exports = function ssr({
+  devMode = false,
   staticDir,
   server,
   log: useLog = true,
@@ -151,14 +152,13 @@ module.exports = function ssr({
         return redirect(ctx, next)
       }
 
-      const useCache = !!renderConfig.cache
       const cacheConfig =
         renderConfig.cache === true ? {} : renderConfig.cache || {}
 
-      const cache =
-        useCache && !cacheConfig.forceUpdate
-          ? await cacheEngine.get(key)
-          : undefined
+      const useCache =
+        !!renderConfig.cache && !cacheConfig.forceUpdate && !devMode
+
+      const cache = useCache ? await cacheEngine.get(key) : undefined
 
       if (isString(cache)) {
         ctx.body = cache

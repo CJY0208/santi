@@ -12,6 +12,7 @@ const proxy = ({ logError = true, ...ssrConfig } = {}) => {
 
   const ssr = new Server({
     ...ssrConfig,
+    devMode: true,
     log: true,
     server: devServerHost,
     renderAfterDocumentEvent: 'ssr-ready',
