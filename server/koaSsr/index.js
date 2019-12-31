@@ -1,4 +1,4 @@
-const proxy = require('koa-proxy')
+const httpProxy = require('koa-server-http-proxy')
 const compress = require('koa-compress')
 const qs = require('qs') // https://github.com/ljharb/qs
 const micromatch = require('micromatch') // https://github.com/micromatch/micromatch
@@ -48,8 +48,11 @@ module.exports = function ssr({
         fallback: '__root.html'
       })
     : server
-    ? proxy({
-        host: server
+    ? httpProxy({
+        target: server,
+        onProxyReq: (proxyReq, req, res) => {
+          proxyReq.setHeader('x-ssr-redirect', true)
+        }
       })
     : undefined
 

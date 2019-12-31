@@ -4,6 +4,8 @@ const portFinder = require('portfinder')
 
 const Server = require('./Server')
 
+const jsdomReg = /jsdom/
+
 const proxy = ({ logError = true, ...ssrConfig } = {}) => {
   let ssrProxy
   const devServerHost = `http://127.0.0.1:${process.env.PORT}`
@@ -25,8 +27,13 @@ const proxy = ({ logError = true, ...ssrConfig } = {}) => {
   const isHTML = accept => HTMLReg.test(accept)
 
   const ssrFilter = (pathname, req) => {
-    const { referer, accept } = req.headers
-    return isHTML(accept) && referer !== 'jsdom://engine/'
+    const {
+      accept,
+      'user-agent': userAgent,
+      'x-ssr-redirect': isSsrRedirect
+    } = req.headers
+
+    return isHTML(accept) && !jsdomReg.test(userAgent) && !isSsrRedirect
   }
 
   ssrFilter.toString = () => 'SSRServer'

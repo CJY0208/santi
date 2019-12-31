@@ -1,6 +1,6 @@
 {
   "name": "santi",
-  "version": "0.0.0-beta.19",
+  "version": "0.0.0-beta.20",
   "description": "Isomorphic framework for base on create-react-app and jsdom",
   "bin": {
     "santi": "./bin/index.js"
@@ -42,11 +42,9 @@
     "jsdom": "^15.2.1",
     "koa": "^2.11.0",
     "koa-compress": "^3.0.0",
-    "koa-proxy": "^1.0.0-alpha.3",
     "koa-send": "^5.0.0",
     "koa-server-http-proxy": "^0.1.0",
     "micromatch": "^4.0.2",
-    "opener": "^1.5.1",
     "portfinder": "^1.0.25",
     "promise-limit": "^2.7.0",
     "qs": "^6.9.1",
