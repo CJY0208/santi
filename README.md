@@ -8,7 +8,9 @@ SSR 功能基于 jsdom，每次渲染需启动 jsdom 沙盒，相对于 React �
 
 具体可参考[压测表现](#benchmark)
 
-## Features
+---
+
+## 特性
 
 - [x] 自动内联关键样式，更快呈现首屏（[对比 Nextjs](#fpspeed)）
 - [x] SSR 无需关注服务端 / 客户端差异
@@ -16,14 +18,22 @@ SSR 功能基于 jsdom，每次渲染需启动 jsdom 沙盒，相对于 React �
 - [x] SPA、预渲染、SSR 功能渐进式开启或关闭
 - [x] 性能良好（搭配合理的缓存，单核心 500QPS + 20ms/AVG 响应）
 - [x] SSR 页面级缓存，自由控制
-- [ ] SSR 组件级缓存
-- [ ] SSR 分片支持
+
+---
 
 ## 兼容性
 
+React v16.8.0+
+
 需要 React Hooks 支持
 
-## Usage
+node v8+
+
+需要 async/await 语法支持
+
+---
+
+## 起步
 
 > 需要先使用 [create-react-app](https://create-react-app.dev/docs/getting-started) 生成项目
 >
@@ -70,13 +80,192 @@ SSR 功能基于 jsdom，每次渲染需启动 jsdom 沙盒，相对于 React �
    render(<App />, document.getElementById('root'))
    ```
 
-## SSR TODO
+---
 
-- [x] ~~State~~
-- [x] ~~Async props~~
-- [x] ~~View cache config~~
-- [ ] Component cache config
-- [ ] Fragmented transmission
+## 主动声明渲染完成
+
+在 SSR 中，每一次 SSR 并不会像 nextjs 那样会在 getInitialProps 后自动完成，需要触发一个自定义事件 `ssr-ready` 来通知 jsdom 完成了渲染
+
+```js
+document.dispatchEvent(new Event('ssr-ready'))
+```
+
+这样做可以自由地确定完成 ssr 渲染的时机，以实现一些有趣的功能，例如让 ssr 允许处理异步载入的模块
+
+在 santi 中，可以不需要手动触发这个自定义事件，触发过程被封装为了一些直接可用的方法：
+
+- api 形式的 ready 方法，它可以延迟触发
+- 组件形式的 Ready 组件，以及在组件 onMount 后立即发起 ready 的 Ready.OnMount 组件
+
+  ```jsx
+  import { ready, Ready } from 'santi'
+
+  ready() // 立即触发 ssr-ready 事件
+  ready(1000) // 1s 后触发 ssr-ready 事件
+
+  function TestReady() {
+    const [ready, setReady] = useState(false)
+
+    useEffect(() => {
+      doSomething.then(() => {
+        setReady(true)
+      })
+    }, [])
+
+    return <Ready when={ready}>...</Ready>
+  }
+
+  function TestReadyOnMount() {
+    return <Ready.OnMount>...</Ready.OnMount>
+  }
+  ```
+
+## 在服务端准备数据
+
+### useState
+
+santi 允许使用 hook 方式的 santi.useState 方法来初始化服务端数据，这个 hook 将会在 ssr 阶段触发，并同步到 csr 阶段，csr 阶段初始化时直接使用 ssr 阶段获得的数据
+
+一般情况下，为了让 ssr 阶段的数据和 csr 阶段可以一一对应，需要给 useState 一个 key 值，用来做两侧数据的交接
+
+```jsx
+import { useState, Ready } from 'santi'
+
+function App() {
+  const [value, setValue] = useState(undefined, 'App_ssrState')
+  const [ready, setReady] = React.useState(false)
+
+  React.useEffect(() => {
+    doSomeAsyncWork().then(value => {
+      setValue(value)
+      setReady(true)
+    })
+  }, [])
+
+  return <Ready when={ready}>State from SSR: {value}</Ready>
+}
+```
+
+如果不希望主动声明这个 key 值，可以使用 withSanti HOC 包裹组件
+
+```jsx
+import { withSanti, useState, Ready } from 'santi'
+
+const App = withSanti(function App() {
+  const [random, setRandom] = useState(Math.random())
+
+  return <Ready.OnMount>State from SSR: {random}</Ready.OnMount>
+})
+```
+
+### getInitialProps
+
+santi 也允许类似于 nextjs 中 getInitialProps 的操作，让数据在服务端就准备好，但使用方式上于 nextjs 有所不同
+
+santi 中的 getInitialProps 使用的是 HOC 形式，渲染方式类似于 React.Suspence，将在异步任务完成后才加载组件，因此可以配合 Ready.OnMount 使用
+
+```jsx
+import { getInitialProps, Ready } from 'santi'
+
+const delay = time => new Promise(resolve => setTimeout(resolve, time))
+
+const App = getInitialProps(async () => {
+  await delay(200) // 模拟异步任务延时
+
+  return {
+    random: `ssrProp ${Math.random()}`
+  }
+})(function App({ random }) {
+  return <Ready.OnMount>Prop from SSR: {random}</Ready.OnMount>
+})
+```
+
+---
+
+## Santi 配置（页面缓存配置）
+
+合法的 santi 配置文件为以下路径
+
+- santi.config.js 或 santi.config.ts
+- .santirc.js 或 .santirc.ts
+- config/index.js 或 config/index.ts
+
+配置文件内容如下
+
+```js
+const { addWebpackAlias } = require('customize-cra')
+
+module.exports = {
+  mode: 'ssr' // santi 模式，可选值为 'spa' | 'ssr'
+
+  prerender: ['/', '/list'] // 构建阶段需要预渲染的路由
+
+  ssr: {
+    timeout: 1000, // 每个 ssr 任务等待 ssr-ready 的最长超时时间
+    renderConfig: [ // 每个渲染请求的行为配置，如缓存等
+      [
+        // 使用 micromatch 进行路径匹配
+        // https://github.com/micromatch/micromatch
+        ['/', '/?**'],
+        req => ({
+          key: `${req.path}:${req.cookie.uid}`, // 缓存将受 cookie 中 uid 影响，不同 uid 缓存不同
+          cache: {
+            maxAge: 1000 // 每次对 / 路由的请求都将缓存 1s
+          }
+        })
+      ],
+      [
+        '/list',
+        {
+          key: '/list',
+          timeout: 2000, // 单独配置该请求的 ssr-ready 超时
+          cache: true // 仅渲染一次后长期缓存
+        }
+      ],
+      [
+        '**', // 默认渲染配置
+        {
+          ssr: false // 不使用 ssr
+        }
+      ]
+    ],
+    cacheEngine: { // 可选自定义缓存引擎，接入 redis 缓存等，默认为 lru-cache 内存缓存
+      get(key) {...},
+      set(key, value maxAge) {...}
+    }
+  },
+
+  // 代理部分参考 http-proxy-middleware
+  // https://github.com/chimurai/http-proxy-middleware
+  proxy: {
+    '/api': 'http://www.somewhere.com'
+  }
+
+  // 基于 create-react-app，并使用 react-app-rewired 和 customize-cra 进行无 inject 定制 webpack
+  // https://github.com/timarney/react-app-rewired
+  // https://github.com/arackaf/customize-cra
+  // webpack 部分对应 customize-cra 中的 override 函数
+  webpack: [
+    addWebpackAlias({
+      // 使用 preact 代替 react
+      // https://preactjs.com/guide/v10/switching-to-preact
+      react: 'preact/compat',
+      'react-dom': 'preact/compat'
+    })
+  ],
+
+  // webpack 部分对应 customize-cra 中的 overrideDevServer 函数
+  devServer: []
+}
+```
+
+## TODO
+
+- [x] ~~useState~~
+- [x] ~~getInitialProps~~
+- [x] ~~SSR 页面级缓存~~
+- [ ] SSR 组件级缓存
+- [ ] SSR 分片支持
 
 ---
 

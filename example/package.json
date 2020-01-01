@@ -1,23 +1,15 @@
 {
   "name": "santi_demo",
-  "version": "0.0.0-beta.14",
+  "version": "0.0.0-beta.22",
   "scripts": {
     "start": "santi start",
     "build": "santi build",
     "serve": "santi serve"
   },
   "config-overrides-path": "node_modules/santi/config",
-  "browserslist": {
-    "production": [">0.2%", "not dead", "not op_mini all"],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
   "dependencies": {
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
-    "santi": "^0.0.0-beta.14"
+    "santi": "^0.0.0-beta.22"
   }
 }

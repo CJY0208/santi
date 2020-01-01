@@ -1,5 +1,6 @@
 const httpProxy = require('koa-server-http-proxy')
 const compress = require('koa-compress')
+const LRU = require('lru-cache') // https://github.com/isaacs/node-lru-cache
 const qs = require('qs') // https://github.com/ljharb/qs
 const micromatch = require('micromatch') // https://github.com/micromatch/micromatch
 
@@ -8,21 +9,25 @@ const {
   isUndefined,
   isFunction,
   isNumber,
+  isObject,
   isString,
   isPromiseLike
 } = require('../helpers/base/is')
 const koaFallbackStatic = require('../koaFallbackStatic')
 
 const renderTaskMap = new Map()
-const defaultCacheMap = new Map()
+const defaultCacheMap = new LRU()
 const defaultCacheEngine = {
   get: key => defaultCacheMap.get(key),
-  set: (key, value, { maxAge } = {}) => {
-    defaultCacheMap.set(key, value)
+  set: (key, value, maxAge) => {
+    if (isObject(maxAge)) {
+      maxAge = maxAge.maxAge
+    }
+
     if (isNumber(maxAge) && maxAge > 0) {
-      setTimeout(() => {
-        defaultCacheMap.delete(key)
-      }, maxAge)
+      defaultCacheMap.set(key, value, maxAge)
+    } else {
+      defaultCacheMap.set(key, value)
     }
   }
 }
@@ -194,9 +199,7 @@ module.exports = function ssr({
       renderTaskMap.delete(key)
 
       if (useCache) {
-        await cacheEngine.set(key, htmlContent, {
-          maxAge: cacheConfig.maxAge
-        })
+        await cacheEngine.set(key, htmlContent, cacheConfig.maxAge)
       }
 
       ctx.body = htmlContent
