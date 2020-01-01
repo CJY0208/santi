@@ -7,8 +7,6 @@ const { paths, koaSsr, getConfig } = require('../../../server')
 const { ssr: ssrConfig = {}, proxy: proxyTable = {} } = getConfig()
 
 const DEFAULT = {
-  useTaskCache: false,
-  taskCacheTimeout: -1,
   deferHeadScripts: true,
   inlinePrimaryStyle: true,
   inject: {

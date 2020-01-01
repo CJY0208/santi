@@ -2,7 +2,7 @@
 
 基于 [create-react-app](https://create-react-app.dev/) 和 [jsdom](https://github.com/jsdom/jsdom) 的同构方案，SPA/预渲染/SSR 三位一体
 
-SSR 功能基于 jsdom，每次渲染需启动 jsdom 沙盒，相对于 React 官方 renderToString 方案存在较大性能差异，因此项目将重点着力于缓存控制的实现
+SSR 功能基于 jsdom，每次渲染需启动 jsdom 沙盒，相对于 React 官方 renderToString 方案存在较大性能差异，因此使用 santi 时需要考虑使用[缓存控制](#config)
 
 目前主要针对低并发高可用性或高并发低可用性等低计算量场景
 
@@ -18,6 +18,8 @@ SSR 功能基于 jsdom，每次渲染需启动 jsdom 沙盒，相对于 React �
 - [x] SPA、预渲染、SSR 功能渐进式开启或关闭
 - [x] 性能良好（搭配合理的缓存，单核心 500QPS + 20ms/AVG 响应）
 - [x] SSR 页面级缓存，自由控制
+- [ ] SSR 组件级缓存
+- [ ] SSR 分片支持
 
 ---
 
@@ -84,7 +86,7 @@ node v8+
 
 ## 主动声明渲染完成
 
-在 SSR 中，每一次 SSR 并不会像 nextjs 那样会在 getInitialProps 后自动完成，需要触发一个自定义事件 `ssr-ready` 来通知 jsdom 完成了渲染
+santi 中，每一次 SSR 并不会像 nextjs 那样会在 getInitialProps 后自动完成，需要触发一个自定义事件 `ssr-ready` 来通知 jsdom 完成了渲染
 
 ```js
 document.dispatchEvent(new Event('ssr-ready'))
@@ -120,11 +122,13 @@ document.dispatchEvent(new Event('ssr-ready'))
   }
   ```
 
+---
+
 ## 在服务端准备数据
 
 ### useState
 
-santi 允许使用 hook 方式的 santi.useState 方法来初始化服务端数据，这个 hook 将会在 ssr 阶段触发，并同步到 csr 阶段，csr 阶段初始化时直接使用 ssr 阶段获得的数据
+santi 允许使用 hook 方式的 `santi.useState` 方法来初始化服务端数据，这个 hook 将会在 ssr 阶段触发，并同步到 csr 阶段，csr 阶段初始化时直接使用 ssr 阶段获得的数据
 
 一般情况下，为了让 ssr 阶段的数据和 csr 阶段可以一一对应，需要给 useState 一个 key 值，用来做两侧数据的交接
 
@@ -164,6 +168,8 @@ santi 也允许类似于 nextjs 中 getInitialProps 的操作，让数据在服�
 
 santi 中的 getInitialProps 使用的是 HOC 形式，渲染方式类似于 React.Suspence，将在异步任务完成后才加载组件，因此可以配合 Ready.OnMount 使用
 
+getInitialProps 中包含了 withSanti 功能，因此其内部使用 santi.useState 不需要声明 key 值
+
 ```jsx
 import { getInitialProps, Ready } from 'santi'
 
@@ -182,7 +188,7 @@ const App = getInitialProps(async () => {
 
 ---
 
-## Santi 配置（页面缓存配置）
+## <div id="config" /> Santi 配置（页面缓存配置）
 
 合法的 santi 配置文件为以下路径
 

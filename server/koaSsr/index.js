@@ -37,7 +37,7 @@ module.exports = function ssr({
   staticDir,
   server,
   log: useLog = true,
-  renderConfig: renderConfigTable = {},
+  renderConfig: renderConfigTable = [],
   cacheEngine = defaultCacheEngine,
   ...rendererConfig
 } = {}) {
