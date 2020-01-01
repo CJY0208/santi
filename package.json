@@ -1,6 +1,6 @@
 {
   "name": "santi",
-  "version": "0.0.0-beta.23",
+  "version": "0.0.0-beta.24",
   "description": "Isomorphic framework for base on create-react-app and jsdom",
   "bin": {
     "santi": "./bin/index.js"

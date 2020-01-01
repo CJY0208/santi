@@ -88,6 +88,8 @@ node v8+
 
 santi 中，每一次 SSR 并不会像 nextjs 那样会在 getInitialProps 后自动完成，需要触发一个自定义事件 `ssr-ready` 来通知 jsdom 完成了渲染
 
+若一次 SSR 渲染迟迟未收到 `ssr-ready` 事件，则默认在 1000ms 后强制采集结果并返回，超时时间可在[配置文件](#config)中的 ssr.timeout 项更改
+
 ```js
 document.dispatchEvent(new Event('ssr-ready'))
 ```

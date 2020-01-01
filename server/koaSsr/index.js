@@ -6,6 +6,7 @@ const micromatch = require('micromatch') // https://github.com/micromatch/microm
 
 const Renderer = require('./Renderer')
 const {
+  isArray,
   isUndefined,
   isFunction,
   isNumber,
@@ -123,7 +124,7 @@ module.exports = function ssr({
     const { key } = renderConfig || {}
 
     if (useLog) {
-      if (getRenderConfigEntries[0]) {
+      if (isArray(getRenderConfigEntries) && getRenderConfigEntries[0]) {
         log(
           `[${times}] "${
             ctx.request.url
