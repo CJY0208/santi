@@ -1,20 +1,19 @@
 import React, { forwardRef, createContext, useContext, useMemo } from 'react'
 import hoistStatics from 'hoist-non-react-statics'
-
-import SidProvider from './components/SidProvider'
+import { NodeKey } from 'react-activation'
 
 const context = createContext()
 const { Provider } = context
 
 function withSanti(Component) {
-  function WrappedComponent({ forwardRef, __sid: sid, ...props }) {
+  function WrappedComponent({ forwardRef, __key: nodeKey, ...props }) {
     let count = 0
     const contextValue = useMemo(
       () => ({
-        sid,
-        getCountedSID: () => (sid ? `${sid}:${count++}` : undefined)
+        nodeKey,
+        getCountedKey: () => (nodeKey ? `${nodeKey}:${count++}` : undefined)
       }),
-      [sid]
+      [nodeKey]
     )
 
     return (
@@ -25,21 +24,28 @@ function withSanti(Component) {
   }
 
   const ForwardedRefHOC = forwardRef((props, ref) => (
-    <SidProvider>
-      {sid => <WrappedComponent {...props} forwardedRef={ref} __sid={sid} />}
-    </SidProvider>
+    <NodeKey>
+      {nodeKey => (
+        <WrappedComponent {...props} forwardedRef={ref} __key={nodeKey} />
+      )}
+    </NodeKey>
   ))
 
   return hoistStatics(ForwardedRefHOC, WrappedComponent)
 }
 
-export function useSID() {
+export function useNodeKey() {
   return (
     useContext(context) || {
-      sid: undefined,
-      getCountedSID: () => undefined
+      nodeKey: undefined,
+      getCountedKey: () => undefined
     }
   )
+}
+
+export function useSID() {
+  const { nodeKey: sid, getCountedKey: getCountedSID } = useNodeKey()
+  return { sid, getCountedSID }
 }
 
 export default withSanti

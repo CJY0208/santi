@@ -8728,10 +8728,10 @@ rc@^1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-activation@^0.3.4:
-  version "0.3.4"
-  resolved "https://registry.npmjs.org/react-activation/-/react-activation-0.3.4.tgz#f4cfa02575f777115e11d8dee60f6b6b437dc5db"
-  integrity sha512-O74pDwL/F/YHfmeF+fDoTEvmVQMWfbx30CRTXAnhV94WNd07x+wFwQhqAvOc/Xs6OyslmVt4RkPv9Ao5fJVryg==
+react-activation@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.npmjs.org/react-activation/-/react-activation-0.4.1.tgz#7f5a57608055c7ecc8142822f2b830aaa4db0f0a"
+  integrity sha512-R7VHBSI8k0JlSgWevJh2apywD+7CdEEvQYN/72Fj69Syk32wt/2mD6ZNj9euTV5+TSkaGv9hwUMhh5eyahYkmA==
   dependencies:
     create-react-context "^0.3.0"
     hoist-non-react-statics "^3.3.0"

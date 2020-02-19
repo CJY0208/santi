@@ -1,7 +1,7 @@
 import { useState as useReactState } from 'react'
 
 import { run, debounce } from './helpers'
-import { useSID } from './withSanti'
+import { useNodeKey } from './withSanti'
 import store from './store'
 
 const warningMissingKey = debounce(() => {
@@ -13,14 +13,14 @@ const warningMissingKey = debounce(() => {
 }, 32)
 
 function useState(initialState, key) {
-  const { getCountedSID } = useSID()
-  const sid = key || run(getCountedSID)
+  const { getCountedKey } = useNodeKey()
+  const nodeKey = key || run(getCountedKey)
   const [state, setState] = useReactState(() => {
-    if (!sid) {
+    if (!nodeKey) {
       warningMissingKey()
     }
 
-    const [err, value] = store.get(sid, initialState)
+    const [err, value] = store.get(nodeKey, initialState)
 
     if (err) {
       console.error(err)
@@ -34,11 +34,11 @@ function useState(initialState, key) {
     getNextState => {
       const nextState = run(getNextState, undefined, state)
 
-      store.set(sid, nextState)
+      store.set(nodeKey, nextState)
 
       return setState(nextState)
     },
-    sid
+    nodeKey
   ]
 }
 

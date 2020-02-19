@@ -3,7 +3,7 @@ import getInitialProps from './getInitialProps'
 import ready from './ready'
 import render from './render'
 import store from './store'
-import withSanti, { useSID } from './withSanti'
+import withSanti, { useNodeKey, useSID } from './withSanti'
 import Ready from './components/Ready'
 import NoSSR from './components/NoSSR'
 
@@ -14,6 +14,7 @@ export default {
   getInitialProps,
   ready,
   withSanti,
+  useNodeKey,
   useSID,
   Ready,
   NoSSR
@@ -26,6 +27,7 @@ export {
   getInitialProps,
   ready,
   withSanti,
+  useNodeKey,
   useSID,
   Ready,
   NoSSR

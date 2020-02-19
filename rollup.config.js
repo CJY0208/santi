@@ -11,7 +11,7 @@ export default [
       name: 'ReactActivation',
       exports: 'named'
     },
-    external: ['react', 'hoist-non-react-statics'],
+    external: ['react', 'hoist-non-react-statics', 'react-activation'],
     plugins: [
       resolve(),
       babel({
@@ -28,7 +28,7 @@ export default [
       exports: 'named',
       sourcemap: true
     },
-    external: ['react', 'hoist-non-react-statics'],
+    external: ['react', 'hoist-non-react-statics', 'react-activation'],
     plugins: [
       resolve(),
       babel({

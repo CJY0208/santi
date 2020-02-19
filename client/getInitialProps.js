@@ -2,7 +2,7 @@ import React, { useState, forwardRef, useRef, useEffect } from 'react'
 import hoistStatics from 'hoist-non-react-statics'
 
 import { run } from './helpers'
-import withSanti, { useSID } from './withSanti'
+import withSanti, { useNodeKey } from './withSanti'
 import store from './store'
 
 const getInitialProps = (fetch, fallback = null, key) => Component => {
@@ -10,12 +10,12 @@ const getInitialProps = (fetch, fallback = null, key) => Component => {
     const [ready, setReady] = useState(false)
     const [ssrProps, setSsrProps] = useState({})
     const mounted = useRef(true)
-    const { getCountedSID } = useSID()
-    const sid = run(getCountedSID) || key
+    const { getCountedKey } = useNodeKey()
+    const nodeKey = key || run(getCountedKey)
 
     useEffect(() => {
       async function init() {
-        const [err, ssrProps] = await store.get(sid, () =>
+        const [err, ssrProps] = await store.get(nodeKey, () =>
           run(fetch, undefined, props)
         )
 

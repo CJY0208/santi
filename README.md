@@ -27,7 +27,9 @@ SSR 功能基于 jsdom，每次渲染需启动 jsdom 沙盒，相对于 React �
 
 React v16.8.0+
 
-需要 React Hooks 支持
+Preact v10+
+
+需要 Hooks 支持
 
 node v8+
 
