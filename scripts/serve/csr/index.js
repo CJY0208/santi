@@ -42,7 +42,7 @@ function runKoa(config = KOA_DEFAULT, port) {
   )
 
   app.listen(port, () => {
-    console.log(`[SPA] Koa2 server listening on port ${port}`)
+    console.log(`[CSR] Koa2 server listening on port ${port}`)
   })
 }
 
