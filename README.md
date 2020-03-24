@@ -206,7 +206,7 @@ const App = getInitialProps(async () => {
 const { addWebpackAlias } = require('customize-cra')
 
 module.exports = {
-  mode: 'ssr' // santi 模式，可选值为 'spa' | 'ssr'
+  mode: 'ssr' // santi 模式，可选值为 'csr' | 'ssr'
 
   prerender: ['/', '/list'] // 构建阶段需要预渲染的路由
 
