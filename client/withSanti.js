@@ -1,6 +1,6 @@
 import React, { forwardRef, createContext, useContext, useMemo } from 'react'
 import hoistStatics from 'hoist-non-react-statics'
-import { NodeKey } from 'react-activation'
+import NodeKey from 'react-node-key'
 
 const context = createContext()
 const { Provider } = context

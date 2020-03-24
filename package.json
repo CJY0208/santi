@@ -49,8 +49,8 @@
     "portfinder": "^1.0.25",
     "promise-limit": "^2.7.0",
     "qs": "^6.9.1",
-    "react-activation": "^0.4.1",
     "react-app-rewired": "^2.1.5",
+    "react-node-key": "^0.0.4",
     "react-scripts": "^3.3.0",
     "webpack-bundle-analyzer": "^3.6.0",
     "yargs": "^15.0.2"

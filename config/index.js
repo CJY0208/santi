@@ -28,7 +28,7 @@ module.exports = {
     [
       ...webpack,
 
-      addBabelPlugin('react-activation/babel'),
+      addBabelPlugin('react-node-key/babel'),
 
       // 启用 webpack-bundle-analyzer 分析，命令行中使用 --analyze 生效
       argv.analyze ? addBundleVisualizer() : undefined,

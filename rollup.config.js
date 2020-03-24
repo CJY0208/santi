@@ -8,10 +8,10 @@ export default [
     output: {
       file: 'lib/client/index.min.js',
       format: 'umd',
-      name: 'ReactActivation',
+      name: 'SantiClient',
       exports: 'named'
     },
-    external: ['react', 'hoist-non-react-statics', 'react-activation'],
+    external: ['react', 'hoist-non-react-statics', 'react-node-key'],
     plugins: [
       resolve(),
       babel({
@@ -28,7 +28,7 @@ export default [
       exports: 'named',
       sourcemap: true
     },
-    external: ['react', 'hoist-non-react-statics', 'react-activation'],
+    external: ['react', 'hoist-non-react-statics', 'react-node-key'],
     plugins: [
       resolve(),
       babel({
