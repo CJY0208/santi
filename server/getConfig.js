@@ -4,6 +4,7 @@ const path = require('path')
 const DEFAULT = {
   mode: 'ssr',
   prerender: false,
+  gzip: true,
   ssr: {},
   proxy: {},
   webpack: [],

@@ -14,7 +14,7 @@ const { getConfig, paths, JSDOMPrerenderer } = require('../server')
 const parsePrerenderConfig = require('./parsePrerenderConfig')
 const { addDevProxy } = require('./override')
 
-const { webpack = [], devServer = [], prerender: prerenderConfig } = getConfig()
+const { webpack = [], devServer = [], prerender: prerenderConfig, gzip = true } = getConfig()
 const { usePrerender, prerenderRoutes, rendererConfig } = parsePrerenderConfig(
   prerenderConfig
 )
@@ -88,7 +88,7 @@ module.exports = {
 
       // gzip 压缩
       // https://webpack.js.org/plugins/compression-webpack-plugin/
-      process.env.NODE_ENV === 'production'
+      gzip && process.env.NODE_ENV === 'production'
         ? addWebpackPlugin(
             new CompressionPlugin({
               exclude: /\.html$/,
