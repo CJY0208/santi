@@ -23,6 +23,10 @@ SSR 功能基于 jsdom，每次渲染需启动 jsdom 沙盒，相对于 React �
 
 ---
 
+## 在线示例
+
+https://codesandbox.io/s/santi-demo-bl1f9
+
 ## 兼容性
 
 React v16.8.0+
