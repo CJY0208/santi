@@ -1,3 +1,5 @@
+const { run } = require('szfe-tools')
+
 const Prerenderer = require('./Prerenderer')
 
 const JSDOMPrerenderer = require('../JSDOMPrerenderer')
@@ -39,7 +41,7 @@ module.exports = class Renderer {
           routeUrl,
           { cookie, inject = {}, timeout = this.config.renderAfterTimeout } = {}
         ) =>
-          renderWithJSDOM(`${server}${routeUrl}`, {
+          renderWithJSDOM(`${run(server)}${routeUrl}`, {
             ...this.config,
             renderAfterTimeout: timeout,
             cookie,

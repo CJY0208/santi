@@ -1,8 +1,9 @@
 import { isArray, isPromiseLike } from './base/is'
 
-export const nextTick = func => Promise.resolve().then(func)
+export const nextTick = (func) => Promise.resolve().then(func)
 
-export const delay = time => new Promise(resolve => setTimeout(resolve, time))
+export const delay = (time) =>
+  new Promise((resolve) => setTimeout(resolve, time))
 
 /**
  * [防抖]
@@ -12,7 +13,7 @@ export const delay = time => new Promise(resolve => setTimeout(resolve, time))
 export const debounce = (func, wait = 16) => {
   let timeout
 
-  return function(...args) {
+  return function (...args) {
     clearTimeout(timeout)
 
     timeout = setTimeout(() => {
@@ -31,14 +32,14 @@ export const debounce = (func, wait = 16) => {
  * @param {Function} valuer 值处理过程
  */
 export const promiseGuess = (executor, valuer) =>
-  function(...args) {
+  function (...args) {
     let value = executor.apply(this, args)
 
     return isPromiseLike(value)
-      ? new Promise(resolve =>
+      ? new Promise((resolve) =>
           value
-            .then(value => resolve(valuer.call(this, null, value, ...args)))
-            .catch(err => resolve(valuer.call(this, err, undefined, ...args)))
+            .then((value) => resolve(valuer.call(this, null, value, ...args)))
+            .catch((err) => resolve(valuer.call(this, err, undefined, ...args)))
         )
       : valuer.call(this, null, value, ...args)
   }
@@ -58,4 +59,12 @@ export function getKey2Id() {
 
     return id
   }
+}
+
+export function isBrowser() {
+  return !window.__SSR__
+}
+
+export function isPrerendering() {
+  return !!window.__PR__
 }

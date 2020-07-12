@@ -1,6 +1,6 @@
 {
   "name": "santi_demo",
-  "version": "0.0.0-beta.22",
+  "version": "0.0.0-beta.33",
   "scripts": {
     "start": "santi start",
     "build": "santi build",
@@ -10,6 +10,18 @@
   "dependencies": {
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
-    "santi": "^0.0.0-beta.22"
+    "santi": "^0.0.0-beta.33"
+  },
+  "browserslist": {
+    "production": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

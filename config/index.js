@@ -3,7 +3,7 @@ const {
   overrideDevServer,
   addBabelPlugin,
   addBundleVisualizer,
-  addWebpackPlugin
+  addWebpackPlugin,
 } = require('customize-cra')
 const { argv } = require('yargs')
 const CompressionPlugin = require('compression-webpack-plugin')
@@ -14,7 +14,12 @@ const { getConfig, paths, JSDOMPrerenderer } = require('../server')
 const parsePrerenderConfig = require('./parsePrerenderConfig')
 const { addDevProxy } = require('./override')
 
-const { webpack = [], devServer = [], prerender: prerenderConfig, gzip = true } = getConfig()
+const {
+  webpack = [],
+  devServer = [],
+  prerender: prerenderConfig,
+  gzip = true,
+} = getConfig()
 const { usePrerender, prerenderRoutes, rendererConfig } = parsePrerenderConfig(
   prerenderConfig
 )
@@ -33,6 +38,28 @@ module.exports = {
       // 启用 webpack-bundle-analyzer 分析，命令行中使用 --analyze 生效
       argv.analyze ? addBundleVisualizer() : undefined,
 
+      // development 模式下启用 css sourceMap 功能
+      // cra 官方未做修复，讨论在此处：https://github.com/facebook/create-react-app/issues/5707
+      adjustStyleLoaders(({ use: [, css, postcss, resolve, processor] }) => {
+        if (process.env.NODE_ENV === 'development') {
+          try {
+            css.options.sourceMap = true // css-loader
+            postcss.options.sourceMap = true // postcss-loader
+            // when enable pre-processor,
+            // resolve-url-loader will be enabled too
+            if (resolve) {
+              resolve.options.sourceMap = true // resolve-url-loader
+            }
+            // pre-processor
+            if (processor && processor.loader.includes('sass-loader')) {
+              processor.options.sourceMap = true // sass-loader
+            }
+          } catch (err) {
+            // nothing, just try
+          }
+        }
+      }),
+
       addWebpackPlugin(
         new HtmlWebpackPlugin(
           Object.assign(
@@ -40,7 +67,7 @@ module.exports = {
             {
               filename: '__root.html',
               inject: true,
-              template: paths.appHtml
+              template: paths.appHtml,
             },
             process.env.NODE_ENV === 'production'
               ? {
@@ -54,8 +81,8 @@ module.exports = {
                     keepClosingSlash: true,
                     minifyJS: true,
                     minifyCSS: true,
-                    minifyURLs: true
-                  }
+                    minifyURLs: true,
+                  },
                 }
               : undefined
           )
@@ -79,9 +106,9 @@ module.exports = {
                 inject: {
                   ...(rendererConfig.inject || null),
                   __SSR__: true,
-                  __PR__: true
-                }
-              })
+                  __PR__: true,
+                },
+              }),
             })
           )
         : undefined,
@@ -92,14 +119,14 @@ module.exports = {
         ? addWebpackPlugin(
             new CompressionPlugin({
               exclude: /\.html$/,
-              threshold: 4096 // 4MB 以下文件不压缩
+              threshold: 4096, // 4MB 以下文件不压缩
             })
           )
-        : undefined
+        : undefined,
     ].filter(Boolean)
   ),
   devServer: overrideDevServer.apply(
     null,
     [...devServer, addDevProxy()].filter(Boolean)
-  )
+  ),
 }

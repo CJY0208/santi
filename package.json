@@ -50,8 +50,9 @@
     "promise-limit": "^2.7.0",
     "qs": "^6.9.1",
     "react-app-rewired": "^2.1.5",
-    "react-node-key": "^0.0.4",
+    "react-node-key": "^0.1.7",
     "react-scripts": "^3.3.0",
+    "szfe-tools": "^0.0.0-beta.7",
     "webpack-bundle-analyzer": "^3.6.0",
     "yargs": "^15.0.2"
   },
@@ -63,9 +64,18 @@
     "rollup": "^1.27.12",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-dts": "^1.4.7",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-uglify": "^6.0.4"
+    "rollup-plugin-uglify": "^6.0.4",
+    "typescript": "^3.9.6"
   },
-  "files": ["bin", "config", "lib", "scripts", "server", "index.js"]
+  "files": [
+    "bin",
+    "config",
+    "lib",
+    "scripts",
+    "server",
+    "index.js"
+  ]
 }

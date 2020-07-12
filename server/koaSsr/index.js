@@ -3,8 +3,6 @@ const compress = require('koa-compress')
 const LRU = require('lru-cache') // https://github.com/isaacs/node-lru-cache
 const qs = require('qs') // https://github.com/ljharb/qs
 const micromatch = require('micromatch') // https://github.com/micromatch/micromatch
-
-const Renderer = require('./Renderer')
 const {
   isArray,
   isUndefined,
@@ -12,14 +10,16 @@ const {
   isNumber,
   isObject,
   isString,
-  isPromiseLike
-} = require('../helpers/base/is')
+  isPromiseLike,
+} = require('szfe-tools')
+
+const Renderer = require('./Renderer')
 const koaFallbackStatic = require('../koaFallbackStatic')
 
 const renderTaskMap = new Map()
 const defaultCacheMap = new LRU()
 const defaultCacheEngine = {
-  get: key => defaultCacheMap.get(key),
+  get: (key) => defaultCacheMap.get(key),
   set: (key, value, maxAge) => {
     if (isObject(maxAge)) {
       maxAge = maxAge.maxAge
@@ -30,7 +30,7 @@ const defaultCacheEngine = {
     } else {
       defaultCacheMap.set(key, value)
     }
-  }
+  },
 }
 
 module.exports = function ssr({
@@ -52,14 +52,14 @@ module.exports = function ssr({
         // 需要存在 .gz 文件时才能生效
         // https://github.com/koajs/send/blob/5.0.0/index.js#L80
         gzip: true,
-        fallback: '__root.html'
+        fallback: '__root.html',
       })
     : server
     ? httpProxy({
         target: server,
         onProxyReq: (proxyReq, req, res) => {
           proxyReq.setHeader('x-ssr-redirect', true)
-        }
+        },
       })
     : undefined
 
@@ -71,7 +71,7 @@ module.exports = function ssr({
   const { render } = new Renderer({
     staticDir,
     server,
-    ...rendererConfig
+    ...rendererConfig,
   })
 
   const log = useLog
@@ -104,7 +104,7 @@ module.exports = function ssr({
       query: ctx.request.query,
       cookie: qs.parse(ctx.request.headers.cookie, { delimiter: '; ' }),
       headers: ctx.request.headers,
-      URL: ctx.request.URL
+      URL: ctx.request.URL,
     }
 
     const getRenderConfigEntries = renderConfigTable.find(([key]) =>
@@ -142,8 +142,8 @@ module.exports = function ssr({
         const html = await render(ctx.request.url, {
           cookie: ctx.request.headers.cookie,
           inject: {
-            __REQUEST__
-          }
+            __REQUEST__,
+          },
         })
 
         log(`[${times}] "${ctx.request.url}" no render config, forced rendered`)
@@ -189,8 +189,8 @@ module.exports = function ssr({
         cookie: ctx.request.headers.cookie,
         inject: {
           __REQUEST__,
-          ...(renderConfig.inject || {})
-        }
+          ...(renderConfig.inject || {}),
+        },
       })
 
       renderTaskMap.set(key, renderTask)
