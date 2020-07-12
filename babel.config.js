@@ -3,10 +3,10 @@ module.exports = {
     [
       '@babel/env',
       {
-        modules: false
-      }
+        modules: false,
+      },
     ],
-    '@babel/react'
+    '@babel/react',
   ],
-  plugins: ['@babel/plugin-proposal-class-properties']
+  plugins: ['@babel/plugin-proposal-class-properties', 'react-node-key/babel'],
 }
