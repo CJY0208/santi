@@ -4,6 +4,7 @@ const {
   addBabelPlugin,
   addBundleVisualizer,
   addWebpackPlugin,
+  adjustStyleLoaders,
 } = require('customize-cra')
 const { argv } = require('yargs')
 const CompressionPlugin = require('compression-webpack-plugin')
