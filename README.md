@@ -1,5 +1,7 @@
 # Santi
 
+![visitor](https://visitor-badge.glitch.me/badge?page_id=cjy0208.santi)
+
 基于 [create-react-app](https://create-react-app.dev/) 和 [jsdom](https://github.com/jsdom/jsdom) 的同构方案，SPA/预渲染/SSR 三位一体
 
 SSR 功能基于 jsdom，每次渲染需启动 jsdom 沙盒，相对于 React 官方 renderToString 方案存在较大性能差异，因此使用 santi 时需要考虑使用[缓存控制](#config)
