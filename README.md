@@ -1,6 +1,6 @@
 # Santi
 
-![visitor](https://visitor-badge.glitch.me/badge?page_id=cjy0208.santi)
+![](https://visitor-badge.glitch.me/badge?page_id=cjy0208.santi)
 
 基于 [create-react-app](https://create-react-app.dev/) 和 [jsdom](https://github.com/jsdom/jsdom) 的同构方案，SPA/预渲染/SSR 三位一体
 
