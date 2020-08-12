@@ -19,6 +19,7 @@ const {
   webpack = [],
   devServer = [],
   prerender: prerenderConfig,
+  proxy: proxyTable,
   gzip = true,
 } = getConfig()
 const { usePrerender, prerenderRoutes, rendererConfig } = parsePrerenderConfig(
@@ -99,6 +100,9 @@ module.exports = {
               staticDir: paths.appBuild,
               // Required - Routes to render.
               routes: prerenderRoutes,
+              server: {
+                proxy: proxyTable
+              },
               renderer: new JSDOMPrerenderer({
                 ...rendererConfig,
                 renderAfterTimeout: rendererConfig.timeout || 1000,
