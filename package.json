@@ -1,6 +1,6 @@
 {
   "name": "santi",
-  "version": "0.0.0-beta.35",
+  "version": "0.0.0-beta.36",
   "description": "Isomorphic framework for base on create-react-app and jsdom",
   "bin": {
     "santi": "bin/santi.js"
@@ -36,7 +36,7 @@
   "dependencies": {
     "@prerenderer/prerenderer": "^0.7.2",
     "compression-webpack-plugin": "^3.0.1",
-    "customize-cra": "^0.9.1",
+    "customize-cra": "^1.0.0",
     "hoist-non-react-statics": "^3.3.1",
     "html-minifier": "^4.0.0",
     "http-proxy-middleware": "^0.20.0",
@@ -51,7 +51,7 @@
     "promise-limit": "^2.7.0",
     "qs": "^6.9.1",
     "react-app-rewired": "^2.1.5",
-    "react-node-key": "^0.1.7",
+    "react-node-key": "^0.1.8",
     "react-scripts": "^3.3.0",
     "szfe-tools": "^0.0.0-beta.7",
     "webpack-bundle-analyzer": "^3.6.0",
