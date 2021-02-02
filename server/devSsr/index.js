@@ -9,6 +9,7 @@ const jsdomReg = /jsdom/
 const proxy = ({ logError = true, ejectPortModifier, ...ssrConfig } = {}) => {
   let ssrProxy
   let port = process.env.PORT
+  const host = process.env.HOST || '127.0.0.1'
 
   if (typeof ejectPortModifier === 'function') {
     ejectPortModifier((nextPort) => {
@@ -20,7 +21,7 @@ const proxy = ({ logError = true, ejectPortModifier, ...ssrConfig } = {}) => {
     ...ssrConfig,
     devMode: true,
     log: true,
-    server: () => `http://127.0.0.1:${port}`,
+    server: () => `http://${host}:${port}`,
     renderAfterDocumentEvent: 'ssr-ready',
     deferHeadScripts: true,
     inlinePrimaryStyle: false,
@@ -49,7 +50,7 @@ const proxy = ({ logError = true, ejectPortModifier, ...ssrConfig } = {}) => {
     ssr.listen(port)
 
     ssrProxy = httpProxy(ssrFilter, {
-      target: `http://127.0.0.1:${port}/`,
+      target: `http://${host}:${port}/`,
       secure: false,
     })
   })
