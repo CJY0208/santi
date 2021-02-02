@@ -2,7 +2,13 @@ import React, { useState, useEffect } from 'react'
 
 import ready from '../../ready'
 
-function Ready({ children, delay, when = false }) {
+function Ready({ children, delay, onMount = false, when = false }) {
+  useEffect(() => {
+    if (onMount) {
+      ready(delay)
+    }
+  }, [])
+
   useEffect(() => {
     if (when) {
       ready(delay)
