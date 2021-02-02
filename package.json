@@ -1,6 +1,6 @@
 {
   "name": "santi",
-  "version": "0.0.0-beta.36",
+  "version": "0.0.0-beta.37",
   "description": "Isomorphic framework for base on create-react-app and jsdom",
   "bin": {
     "santi": "bin/santi.js"
@@ -52,7 +52,7 @@
     "qs": "^6.9.1",
     "react-app-rewired": "^2.1.8",
     "react-node-key": "^0.1.8",
-    "react-scripts": "^4.0.1",
+    "react-scripts": "^3.4.4",
     "szfe-tools": "^0.0.0-beta.7",
     "webpack-bundle-analyzer": "^3.6.0",
     "yargs": "^15.0.2"
