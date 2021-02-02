@@ -14,9 +14,11 @@ class CustomResourceLoader extends ResourceLoader {
     if (this.useCache && this.cache[url]) {
       return this.cache[url]
     }
+    
+    const host = process.env.HOST || '127.0.0.1'
 
     let fetch =
-      this.localStaticOnly && new URL(url).hostname !== '127.0.0.1'
+      this.localStaticOnly && new URL(url).hostname !== host
         ? Object.assign(Promise.resolve(Buffer.from('')), {
             abort: () => null
           })
