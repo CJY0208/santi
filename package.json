@@ -55,7 +55,10 @@
     "react-scripts": "^3.4.4",
     "szfe-tools": "^0.0.0-beta.7",
     "webpack-bundle-analyzer": "^3.6.0",
-    "yargs": "^15.0.2"
+    "yargs": "^15.0.2",
+    "lodash": "^4.17.15",
+    "postcss": "^7.0.17",
+    "postcss-selector-parser": "6.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.7.5",
