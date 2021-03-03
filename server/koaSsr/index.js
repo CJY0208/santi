@@ -143,6 +143,8 @@ module.exports = function ssr({
     try {
       if (useSsr && isUndefined(key)) {
         const html = await render(ctx.request.url, {
+          uncss: rendererConfig.uncss,
+          timeout: rendererConfig.timeout,
           cookie: ctx.request.headers.cookie,
           inject: {
             __REQUEST__,
@@ -188,7 +190,8 @@ module.exports = function ssr({
       }
 
       renderTask = render(ctx.request.url, {
-        timeout: renderConfig.timeout,
+        uncss: renderConfig.uncss || rendererConfig.uncss,
+        timeout: renderConfig.timeout || rendererConfig.timeout,
         cookie: ctx.request.headers.cookie,
         inject: {
           __REQUEST__,
