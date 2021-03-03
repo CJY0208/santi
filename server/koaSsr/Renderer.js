@@ -1,5 +1,5 @@
 const { run } = require('szfe-tools')
-
+const express = require('express')
 const Prerenderer = require('./Prerenderer')
 
 const JSDOMPrerenderer = require('../JSDOMPrerenderer')
@@ -8,7 +8,7 @@ const renderWithJSDOM = require('../renderWithJSDOM')
 const DEFAULT_RENDERER_CONFIG = {}
 
 module.exports = class Renderer {
-  constructor({ staticDir, server, proxy, ...rendererConfig }) {
+  constructor({ staticDir, publicPath, server, proxy, ...rendererConfig }) {
     this.config = {
       ...DEFAULT_RENDERER_CONFIG,
       ...rendererConfig
@@ -24,6 +24,12 @@ module.exports = class Renderer {
         // The plugin that actually renders the page.
         renderer: new JSDOMPrerenderer(this.config)
       })
+
+      if (publicPath !== '/') {
+        prerender._server._expressServer.use(publicPath, express.static(staticDir, {
+          dotfiles: 'allow'
+        }))
+      }
 
       prerender.initialize()
 
