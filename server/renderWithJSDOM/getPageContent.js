@@ -24,7 +24,7 @@ const getPageContent = (dom, config = DEFAULT_CONFIG, resources) =>
       let interval
       let timeout
 
-      function captureDocument() {
+      async function captureDocument() {
         // console.log('节点数：', document.body.querySelectorAll('*').length)
         if (options.deferHeadScripts) {
           // defer scripts
