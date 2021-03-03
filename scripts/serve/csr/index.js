@@ -22,6 +22,7 @@ function runKoa(config = KOA_DEFAULT, port) {
   const {
     proxy: proxyTable,
     staticDir = paths.appBuild,
+    publicPath = paths.publicUrlOrPath,
     static: staticOpts
   } = {
     ...KOA_DEFAULT,
@@ -37,7 +38,8 @@ function runKoa(config = KOA_DEFAULT, port) {
   app.use(
     koaFallbackStatic(staticDir, {
       ...staticOpts,
-      fallback: '__root.html'
+      fallback: '__root.html',
+      publicPath
     })
   )
 

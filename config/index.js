@@ -133,6 +133,6 @@ module.exports = {
   ),
   devServer: overrideDevServer.apply(
     null,
-    [...devServer, addDevProxy()].filter(Boolean)
+    [...devServer, addDevProxy({ publicPath: paths.publicUrlOrPath })].filter(Boolean)
   ),
 }

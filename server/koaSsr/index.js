@@ -36,6 +36,7 @@ const defaultCacheEngine = {
 module.exports = function ssr({
   devMode = false,
   staticDir,
+  publicPath,
   server,
   log: useLog = true,
   renderConfig: renderConfigTable = [],
@@ -53,6 +54,7 @@ module.exports = function ssr({
         // https://github.com/koajs/send/blob/5.0.0/index.js#L80
         gzip: true,
         fallback: '__root.html',
+        publicPath,
       })
     : server
     ? httpProxy({
@@ -70,6 +72,7 @@ module.exports = function ssr({
 
   const { render } = new Renderer({
     staticDir,
+    publicPath,
     server,
     ...rendererConfig,
   })
