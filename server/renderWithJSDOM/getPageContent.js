@@ -1,4 +1,7 @@
+const uncss = require('./uncss')
+
 const DEFAULT_CONFIG = {
+  uncss: false,
   deferHeadScripts: true,
   asyncHeadScripts: false,
   inlinePrimaryStyle: true,
@@ -55,6 +58,21 @@ const getPageContent = (dom, config = DEFAULT_CONFIG, resources) =>
               // document.head.removeChild(tag)
               document.body.appendChild(tag)
             })
+        }
+
+        // 过滤无效 css
+        if (config.uncss) {
+          await Promise.all(
+            [...document.head.querySelectorAll('style')].map(async (style) => {
+              const nextInnerHTML = await uncss(dom, style.innerHTML)
+
+              if (nextInnerHTML.length > 0) {
+                style.innerHTML = nextInnerHTML 
+              } else {
+                style.parentNode.removeChild(style)
+              }            
+            })
+          )
         }
 
         // get page content string
