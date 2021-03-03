@@ -5,7 +5,7 @@ const { devSsr, getConfig } = require('../../server')
 
 const { ssr, mode, proxy: proxyTable } = getConfig()
 
-const addDevProxy = () => (config) => {
+const addDevProxy = ({ publicPath } = {}) => (config) => {
   const originBefore = config.before
   const originOnListening = config.onListening
 
@@ -27,6 +27,7 @@ const addDevProxy = () => (config) => {
       app.use(
         devSsr({
           ...ssr,
+          publicPath,
           logError: false,
           renderAfterTimeout: ssr.timeout || 1000,
           ejectPortModifier(modifier) {
