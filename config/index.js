@@ -98,6 +98,7 @@ module.exports = {
             new PrerenderSPAPlugin({
               // Required - The path to the webpack-outputted app to prerender.
               staticDir: paths.appBuild,
+              publicPath: paths.publicUrlOrPath,
               // Required - Routes to render.
               routes: prerenderRoutes,
               server: {
