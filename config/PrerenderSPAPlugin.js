@@ -5,6 +5,7 @@
 const path = require('path')
 const Prerenderer = require('@prerenderer/prerenderer')
 const { minify } = require('html-minifier')
+const express = require('express')
 
 function PrerenderSPAPlugin(...args) {
   const rendererOptions = {} // Primarily for backwards-compatibility.
@@ -78,14 +79,18 @@ PrerenderSPAPlugin.prototype.apply = function(compiler) {
 
   const afterEmit = (compilation, done) => {
     const PrerendererInstance = new Prerenderer(this._options)
-    
-    PrerendererInstance._server._expressServer.use(this._options.publicPath || '/', express.static(this._options.staticDir, {
-      dotfiles: 'allow'
-    }))
+
+    if (this._options.publicPath !== '/') {
+      PrerendererInstance._server._expressServer.use(this._options.publicPath, express.static(this._options.staticDir, {
+        dotfiles: 'allow'
+      }))
+    }
 
     PrerendererInstance.initialize()
       .then(() => {
-        return PrerendererInstance.renderRoutes(this._options.routes || [])
+        return PrerendererInstance.renderRoutes(this._options.routes.map(route => (
+          this._options.publicPath !== '/' ? `${this._options.publicPath}${route}` : route
+        )) || [])
       })
       // Backwards-compatibility with v2 (postprocessHTML should be migrated to postProcess)
       .then(renderedRoutes =>
@@ -136,7 +141,7 @@ PrerenderSPAPlugin.prototype.apply = function(compiler) {
           if (!rendered.outputPath) {
             rendered.outputPath = path.join(
               this._options.outputDir || this._options.staticDir,
-              rendered.route.replace(this._options.publicPath || '/', '/'),
+              this._options.publicPath !== '/' ? rendered.route.replace(this._options.publicPath, '') : rendered.route,
               'index.html'
             )
           }
