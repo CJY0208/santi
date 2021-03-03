@@ -29,6 +29,7 @@ function run(config = DEFAULT, port) {
   app.use(
     koaSsr({
       staticDir: paths.appBuild,
+      publicPath: paths.publicUrlOrPath,
       ...DEFAULT,
       ...ssrConfig,
       ...config,
