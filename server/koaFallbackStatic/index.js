@@ -1,9 +1,11 @@
 const koaStatic = require('./koaStatic')
 
-function koaFallbackStatic(root, { fallback = '/', ...opts } = {}) {
+function koaFallbackStatic(root, { fallback = '/', publicPath = '/', ...opts } = {}) {
   const serveStatic = koaStatic(root, opts)
 
   return async (ctx, next) => {
+    ctx.request.url = ctx.request.url.replace(publicPath, '/')
+
     if (
       /\.html$/.test(ctx.request.url) ||
       !/text\/html/.test(ctx.header.accept)
