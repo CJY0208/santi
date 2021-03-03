@@ -78,6 +78,10 @@ PrerenderSPAPlugin.prototype.apply = function(compiler) {
 
   const afterEmit = (compilation, done) => {
     const PrerendererInstance = new Prerenderer(this._options)
+    
+    PrerendererInstance._server._expressServer.use(this._options.publicPath || '/', express.static(this._options.staticDir, {
+      dotfiles: 'allow'
+    }))
 
     PrerendererInstance.initialize()
       .then(() => {
@@ -132,7 +136,7 @@ PrerenderSPAPlugin.prototype.apply = function(compiler) {
           if (!rendered.outputPath) {
             rendered.outputPath = path.join(
               this._options.outputDir || this._options.staticDir,
-              rendered.route,
+              rendered.route.replace(this._options.publicPath || '/', '/'),
               'index.html'
             )
           }
