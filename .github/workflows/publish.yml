@@ -28,18 +28,21 @@ jobs:
       if: steps.check.outputs.changed == 'true'
       uses: actions/setup-node@master
       with:
-        node-version: 14.15.4
+        node-version: 13.11.0
 
     - name: Install Dependencies
       if: steps.check.outputs.changed == 'true'
       uses: bahmutov/npm-install@v1
       with:
-        args: install
         useLockFile: false
 
     - name: Build
       if: steps.check.outputs.changed == 'true'
       run: 'sudo npm run build'
+      
+    - name: Set up Git
+      if: steps.check.outputs.changed == 'true'
+      run: 'git config --global --add safe.directory /github/workspace'
 
     - name: Publish
       if: steps.check.outputs.changed == 'true'
