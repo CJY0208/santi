@@ -34,12 +34,20 @@ const proxy = ({ logError = true, ejectPortModifier, ...ssrConfig } = {}) => {
   const HTMLReg = /^text\/html/
   const isHTML = (accept) => HTMLReg.test(accept)
 
+  // 静态资源文件扩展名列表（不需要 SSR 处理）
+  const staticResourceReg = /\.(pdf|jpg|jpeg|png|gif|svg|webp|ico|woff|woff2|ttf|eot|otf|mp4|webm|mp3|wav|zip|gz|tar|xml|json|css|js|map)$/i
+
   const ssrFilter = (pathname, req) => {
     const {
       accept,
       'user-agent': userAgent,
       'x-ssr-redirect': isSsrRedirect,
     } = req.headers
+
+    // 如果是静态资源文件，不进行 SSR 处理
+    if (staticResourceReg.test(pathname)) {
+      return false
+    }
 
     return isHTML(accept) && !jsdomReg.test(userAgent) && !isSsrRedirect
   }
